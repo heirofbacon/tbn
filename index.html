@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+    <title>The Bacon Network</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="fontawesome/css/all.min.css">  
+    <style>
+        
+    </style>
+</head>
+<body>
+<div class="header">
+    <h2><a href="/bacontools/index.html" target="_blank" rel="noopener noreferrer">Bacon Toolkit</a></h2>
+    <div class="mid-spot" onclick="document.body.classList.toggle('gold');"><button id="pokemon"></button></div>
+    <a href="https://linktr.ee/theheirofbacon">
+      <button class="contact-btn">
+      <span class="glow"></span>
+      <span class="contact-btn-content">Donate</span>
+    </button></a>
+    
+    <div class="spotlight">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+</div>
+
+<canvas id="particleCanvas"></canvas>
+
+<div class="accent-lines">
+    <div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+    <div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+</div>
+
+<div class="heroSubP">
+    <p></p>
+</div>
+
+<div class="hero">
+    <div class="heroT">
+      <h2>heirofbacon</h2>
+      <h2>heirofbacon</h2>
+    </div>
+</div>
+
+<p class="heroP">THE BACON NETWORK</p>
+
+<div class="center-button">
+    <a href="bacontools/index.html" rel="noopener noreferrer">
+      <button class="center-btn">
+        <span class="glow"></span>
+        <span class="center-btn-content">Bacon Toolkit</span>
+      </button>
+    </a>
+</div>
+
+<div class="mountains">
+    <div></div>
+    <div></div>
+    <div></div>
+</div>
+
+<div class="hero-spacer"></div>
+
+<div class="content-section">
+    <div class="content-acc">
+      <div></div>
+      <div></div>
+    </div>
+    <p class="subt">just a guy, nothing more, nothing less.</p>
+    <h3 class="title">Develop. Design. Inspire.</h3>
+    <a href="mailto:theheirofbacon@gmail.com"><p class="subp">CONTACT ME</p></a>
+    
+    <div class="socials">
+      <a href="https://x.com/theheirofbacon" target="_blank" rel="noopener noreferrer" class="social-link">
+        <i class="fab fa-x-twitter"></i>
+      </a>
+      <a href="https://youtube.com/@heirofbacon" target="_blank" rel="noopener noreferrer" class="social-link">
+        <i class="fab fa-youtube"></i>
+      </a>
+      <a href="https://tiktok.com/@heirofbacon" target="_blank" rel="noopener noreferrer" class="social-link">
+        <i class="fab fa-tiktok"></i>
+      </a>
+      <a href="https://www.paypal.com/paypalme/jdeppth" target="_blank" rel="noopener noreferrer" class="social-link">
+        <i class="fab fa-paypal"></i>
+      </a>
+      <a href="https://account.venmo.com/u/heirofbacon" target="_blank" rel="noopener noreferrer" class="social-link">
+        <i class="fab fa-venmo-v"></i>
+      </a>
+      <a href="https://cash.app/$heirofbacon" target="_blank" rel="noopener noreferrer" class="social-link">
+        <i class="fab fa-cash-app"></i>
+      </a>
+    </div>
+</div>
+<script>
+  let count = 0;
+  const button = document.getElementById('pokemon');
+
+  button.addEventListener('click', () => {
+    count++;
+    if (count === 5) {
+      window.location.href = 'http://jserver.local/heirofbacon/secret/pe.html'; // Change to desired URL
+    } else {
+      console.log(`Clicked ${count} times`);
+    }
+  });
+</script>
+<script src="js/script.js"></script>
+</body>
+</html>

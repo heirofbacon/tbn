@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Watermark Overlay - Bacon Tools</title>
+  <link rel="stylesheet" href="/fontawesome/css/all.min.css">
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: transparent !important;
+        height: 100vh;
+        width: 100vw;
+      }
+
+      #watermark {
+        position: absolute;
+        white-space: nowrap;
+        pointer-events: none;
+        user-select: none;
+        will-change: transform;
+        font-family: Impact, 'Arial Black', sans-serif;
+        color: rgba(255, 255, 255, 0.45);
+        font-size: 80px;
+        text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+        padding: 8px 12px;
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="watermark" class="flex items-center gap-3">
+      <i id="iconElement" class=""></i>
+      <span id="textElement"></span>
+    </div>
+    <script>
+      const el = document.getElementById('watermark');
+      const iconEl = document.getElementById('iconElement');
+      const textEl = document.getElementById('textElement');
+      const params = new URLSearchParams(window.location.search);
+      // Read all parameters (with defaults)
+      const text = params.get('text') || '@heirofbacon 🥓';
+      const size = parseFloat(params.get('size')) || 50;
+      const opacity = parseFloat(params.get('opacity')) || 0.4;
+      const speed = parseFloat(params.get('speed')) || 2;
+      const w = parseInt(params.get('w')) || 1920;
+      const h = parseInt(params.get('h')) || 1080;
+      const font = decodeURIComponent(params.get('font') || 'Impact');
+      const color = params.get('color') || '#ffffff';
+      const iconEnabledRaw = params.get('iconEnabled');
+      const iconEnabled = iconEnabledRaw === '1' || iconEnabledRaw === 'true'; // safe check
+      const iconClass = params.get('icon') || 'fa-solid fa-bacon';
+      // Apply base styles to the container
+      el.style.fontSize = size + 'px';
+      el.style.opacity = opacity;
+      el.style.fontFamily = font;
+      el.style.color = color;
+      document.body.style.width = w + 'px';
+      document.body.style.height = h + 'px';
+      document.documentElement.style.height = h + 'px';
+      
+      // Apply text
+      //textEl.textContent = text;
+      if (text.match(/\.(jpeg|jpg|gif|png|webp|svg)$/i)) {
+      // It's an image URL → show <img> instead of text
+      textEl.innerHTML = `<img src="${text}" alt="Custom Image" style="max-height: ${size * 1.5}px; width: auto; display: block;">`;
+      textEl.style.display = 'inline-block';
+      } else {
+      // Normal text
+      textEl.textContent = text;
+      textEl.style.display = 'inline-block';
+      }
+      // Apply icon (only if enabled)
+      if (iconEnabled) {
+        const animClass = params.get('iconAnim') || ''; // read from URL
+        iconEl.className = `${iconClass} ${animClass}`; // combine base icon + animation
+        iconEl.style.fontSize = (size * 1.1) + 'px';
+        iconEl.style.color = color; // or iconColor
+      } else {
+        iconEl.style.display = 'none';
+      }
+      // Bounce logic
+      let x = Math.random() * (w - el.offsetWidth - 40);
+      let y = Math.random() * (h - el.offsetHeight - 40);
+      let dx = speed * (Math.random() > 0.5 ? 1 : -1);
+      let dy = speed * (Math.random() > 0.5 ? 1 : -1);
+
+      function bounce() {
+        x += dx;
+        y += dy;
+        if (x <= 0 || x + el.offsetWidth >= w) dx = -dx;
+        if (y <= 0 || y + el.offsetHeight >= h) dy = -dy;
+        el.style.left = x + 'px';
+        el.style.top = y + 'px';
+        requestAnimationFrame(bounce);
+      }
+      window.addEventListener('load', bounce);
+    </script>
+  </body>
+</html>

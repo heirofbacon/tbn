@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bacon Toolkit 🥓</title>
+    <!-- Tailwind via CDN for simplicity -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              bacon: '#f56565',
+            }
+          }
+        }
+      }
+    </script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="../fontawesome/css/all.css">
+    <style>
+      body {
+        background: #0f1117;
+        color: #e2e8f0;
+        min-height: 100vh;
+      }
+
+      .tool-card {
+        transition: all 0.2s;
+      }
+
+      .tool-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+      }
+            .fa-kick::before {
+        font-family: Arial Black, sans-serif;
+        font-weight: bold;
+        content: 'K';
+        font-size: 1.1em;
+ }
+    </style>
+  </head>
+  <body class="min-h-screen flex flex-col bg-gray-900 text-gray-100">
+    <!-- Header (static, always here) -->
+    <header class="bg-gray-800 border-b border-gray-700 py-6">
+      <div class="max-w-5xl mx-auto px-4 flex justify-between items-center">
+        <h1 class="text-4xl font-bold text-white flex items-center gap-3">
+        Bacon Toolkit
+        <div class="mt-4 text-gray-400 text-sm">
+        <p class="text-gray-400">Simple Free Streamer Overlays</p>
+        </div>
+        </h1>  
+        
+        <div class="flex items-center gap-8">
+          <a href="https://linktr.ee/theheirofbacon" target="_blank" class="flex items-center gap-2 text-red-700 hover:text-red-500 font-medium text-lg">
+            <i class="fas fa-heart"></i> Donate </a>
+        </div>
+      </div>
+    </header>
+    <!-- Main content area -->
+    <main class="flex-grow flex flex-col">
+      <!-- Dashboard / Tool selector -->
+      <div id="dashboard" class="max-w-5xl mx-auto px-4 py-8">
+        <h2 class="text-3xl font-bold mb-6 text-center">Choose a Tool</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Watermark tool button -->
+          <button class="tool-btn bg-gray-800 p-6 rounded-xl border border-gray-700 hover:border-indigo-500 transition-all" data-tool="watermark">
+            <img src="./images/dvd.svg" alt="DVD Logo" class="h-20 w-20 mb-4 mx-auto">
+            <h3 class="text-2xl font-semibold mb-2">Bouncing Watermark</h3>
+            <p class="text-gray-400">DVD-style bouncing text/icon overlay</p>
+          </button>
+          <!-- Socials Rotator -->
+          <button class="tool-btn bg-gray-800 p-6 rounded-xl border border-gray-700 hover:border-indigo-500 transition-all" data-tool="socials">
+            <div class="text-6xl mb-4">
+              <i class="fa-solid fa-share-nodes text-indigo-400"></i>
+            </div>
+            <h3 class="text-2xl font-semibold mb-2">Socials Rotator</h3>
+            <p class="text-gray-400">Cycle through your social handles with animation</p>
+          </button>
+          <!-- Weather Overlay -->
+          <button class="tool-btn bg-gray-800 p-6 rounded-xl border border-gray-700 hover:border-indigo-500 transition-all" data-tool="weather">
+            <div class="text-6xl mb-4">
+              <i class="fa-solid fa-cloud-sun-rain text-sky-400"></i>
+            </div>
+            <h3 class="text-2xl font-semibold mb-2">Weather Overlay</h3>
+            <p class="text-gray-400">Live temperature, condition, and location</p>
+          </button>
+        </div>
+              <div class="mt-4 text-gray-400 text-sm">
+        <p class="font-semibold mb-2">A collection of simple browser based overlays</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Customize the options and simply paste it in your <a href="https://obsproject.com/" target="_blank" class="text-indigo-400 hover:text-indigo-300">OBS</a> browser source or on any streaming platform or app.</li>
+          <li>Easily manage or edit options and parameters by simply modifying the URL.</li>
+          <li>Free to use.</li>
+          <li>No account needed.</li>
+          <li>No subscription needed.</li>
+          <li>No advertisements.</li>
+          <li>No special permissions.</li>
+          <li>Just simple overlays.</li>
+        </ul>
+      </div>
+      </div>
+      <div id="tool-container" class="flex-grow hidden"></div>
+    </main>
+    <!-- Footer (static) -->
+    <footer class="bg-gray-800 border-t border-gray-700 py-6">
+      <div class="max-w-5xl mx-auto px-4 text-center text-gray-500">
+        <p class="text-xl">© 2026 heirofbacon - The Bacon Network</p>
+        <div class="mt-3 flex justify-center gap-6 text-3xl">
+          <a href="https://x.com/theheirofbacon" class="text-indigo-400 hover:text-indigo-300">
+            <i class="fab fa-x-twitter"></i>
+          </a>
+          <a href="https://youtube.com/@heirofbacon" class="text-indigo-400 hover:text-indigo-300">
+            <i class="fab fa-youtube"></i>
+          </a>
+          <a href="https://tiktok.com/@heirofbacon" class="text-indigo-400 hover:text-indigo-300">
+            <i class="fab fa-tiktok"></i>
+          </a>
+          <a href="https://www.paypal.com/paypalme/jdeppth" class="text-indigo-400 hover:text-indigo-300">
+            <i class="fab fa-paypal"></i>
+          </a>
+          <a href="https://account.venmo.com/u/heirofbacon" class="text-indigo-400 hover:text-indigo-300">
+            <i class="fab fa-venmo-v"></i>
+          </a>
+          <a href="https://cash.app/$heirofbacon" class="text-indigo-400 hover:text-indigo-300">
+            <i class="fab fa-cash-app"></i>
+          </a>
+        </div>
+      </div>
+    </footer>
+    <!-- JavaScript to load tools dynamically -->
+    <script>
+      const toolContainer = document.getElementById('tool-container');
+      const dashboard = document.getElementById('dashboard');
+      document.querySelectorAll('.tool-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const toolName = btn.dataset.tool;
+          dashboard.classList.add('hidden');
+          toolContainer.classList.remove('hidden');
+          fetch(`../bacontools/tools/${toolName}/editor.html`).then(response => {
+            if (!response.ok) throw new Error('Tool not found');
+            return response.text();
+          }).then(html => {
+            toolContainer.innerHTML = html;
+            const scripts = toolContainer.querySelectorAll('script');
+            scripts.forEach(oldScript => {
+              const newScript = document.createElement('script');
+              Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+              newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+              oldScript.parentNode.replaceChild(newScript, oldScript);
+            });
+          }).catch(err => {
+            toolContainer.innerHTML = `
+					<div class="text-center text-red-400 p-8">Error loading tool: ${err.message}</div>`;
+          });
+        });
+      });
+      // Back button to return to dashboard
+      document.getElementById('back-to-dashboard').addEventListener('click', () => {
+        toolContainer.innerHTML = '';
+        toolContainer.classList.add('hidden');
+        dashboard.classList.remove('hidden');
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Socials Rotator Overlay</title>
+  <link rel="stylesheet" href="/fontawesome/css/all.min.css">
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      background: transparent;
+    }
+
+    #socials-container {
+      position: absolute;
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 12px 24px;
+      box-sizing: border-box;
+    }
+
+    .social-item {
+      display: none;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .social-item img {
+      width: 1em;
+      height: 1em;
+      object-fit: contain;
+    }
+
+    /* Animations */
+    @keyframes fadeIn    { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideLeft { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideRight{ from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes zoomIn    { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    @keyframes bounceIn  {
+      0%   { transform: scale(0.8); opacity: 0; }
+      60%  { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+
+    .anim-fade        { animation: fadeIn     0.8s ease-out; }
+    .anim-slide-left  { animation: slideLeft  0.8s ease-out; }
+    .anim-slide-right { animation: slideRight 0.8s ease-out; }
+    .anim-zoom        { animation: zoomIn     0.8s ease-out; }
+    .anim-bounce      { animation: bounceIn   0.8s ease-out; }
+
+          .fa-kick::before {
+        font-family: Arial Black, sans-serif;
+        font-weight: bold;
+        content: 'K';
+        font-size: 1.1em;
+ }
+  </style>
+</head>
+<body>
+
+  <div id="socials-container"></div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+
+    let socials = [];
+    try {
+      socials = JSON.parse(decodeURIComponent(params.get('socials') || '[]'));
+    } catch (e) {}
+
+    const size          = parseFloat(params.get('size'))     || 40;
+    const interval      = (parseInt(params.get('interval'))  || 5) * 1000;
+    const anim          = params.get('anim')                 || 'fade';
+    const font          = params.get('font')                 || 'impact';
+    const textColor     = params.get('textColor')            || '#ffffff';
+    const iconColor     = params.get('iconColor')            || '#ffffff';
+    const shadowEnabled = params.get('shadowEnabled') === '1';
+    const shadowColor   = params.get('shadowColor')          || '#000000';
+    const shadowBlur    = parseInt(params.get('shadowBlur')) || 8;
+    const outlineEnabled = params.get('outlineEnabled') === '1';
+    const outlineColor  = params.get('outlineColor')         || '#000000';
+    const outlineWidth  = parseFloat(params.get('outlineWidth')) || 2;
+    const canvasW       = parseInt(params.get('w'))          || 1920;
+    const canvasH       = parseInt(params.get('h'))          || 1080;
+    const position      = params.get('position')             || 'bottom-right';
+    const marginX       = parseInt(params.get('marginX'))    || 20;
+    const marginY       = parseInt(params.get('marginY'))    || 20;
+    const useSvg        = params.get('useSvg') === '1';
+
+    // Set canvas size
+    document.body.style.width  = canvasW + 'px';
+    document.body.style.height = canvasH + 'px';
+
+    const container = document.getElementById('socials-container');
+    container.style.fontSize   = size + 'px';
+    container.style.fontFamily = font;
+    container.style.color      = textColor;
+
+    // Apply shadow to container (affects text)
+    if (shadowEnabled) {
+      container.style.textShadow = `0 0 ${shadowBlur}px ${shadowColor}`;
+    }
+
+    // Apply outline to container (affects text)
+    if (outlineEnabled) {
+      container.style.webkitTextStroke = `${outlineWidth}px ${outlineColor}`;
+      container.style.textStroke       = `${outlineWidth}px ${outlineColor}`;
+    }
+
+    // Position logic
+    let posTop = '50%';
+    let posLeft = '50%';
+    let posRight = 'auto';
+    let posBottom = 'auto';
+    let posTranslateX = '-50%';
+    let posTranslateY = '-50%';
+
+    if (position === 'top-left') {
+      posTop = marginY + 'px'; posLeft = marginX + 'px';
+      posTranslateX = '0'; posTranslateY = '0';
+    } else if (position === 'top-center') {
+      posTop = marginY + 'px'; posLeft = '50%';
+      posTranslateX = '-50%'; posTranslateY = '0';
+    } else if (position === 'top-right') {
+      posTop = marginY + 'px'; posRight = marginX + 'px'; posLeft = 'auto';
+      posTranslateX = '0'; posTranslateY = '0';
+    } else if (position === 'bottom-left') {
+      posBottom = marginY + 'px'; posTop = 'auto'; posLeft = marginX + 'px';
+      posTranslateX = '0'; posTranslateY = '0';
+    } else if (position === 'bottom-center') {
+      posBottom = marginY + 'px'; posTop = 'auto'; posLeft = '50%';
+      posTranslateX = '-50%'; posTranslateY = '0';
+    } else if (position === 'bottom-right') {
+      posBottom = marginY + 'px'; posTop = 'auto'; posRight = marginX + 'px'; posLeft = 'auto';
+      posTranslateX = '0'; posTranslateY = '0';
+    }
+
+    container.style.position = 'absolute';
+    container.style.top      = posTop;
+    container.style.left     = posLeft;
+    container.style.right    = posRight;
+    container.style.bottom   = posBottom;
+    container.style.transform = `translate(${posTranslateX}, ${posTranslateY})`;
+
+    // Font Awesome fallback classes
+    const faClasses = {
+      twitter:     'fa-brands fa-x-twitter',
+      twitch:      'fa-brands fa-twitch',
+      youtube:     'fa-brands fa-youtube',
+      discord:     'fa-brands fa-discord',
+      tiktok:      'fa-brands fa-tiktok',
+      instagram:   'fa-brands fa-instagram',
+      facebook:    'fa-brands fa-facebook',
+      whatsapp:    'fa-brands fa-whatsapp',
+      steam:       'fa-brands fa-steam',
+      xbox:        'fa-brands fa-xbox',
+      playstation: 'fa-brands fa-playstation',
+      snapchat:    'fa-brands fa-snapchat',
+      github:      'fa-brands fa-github',
+      cashapp:     'fa-brands fa-cash-app',
+      paypal:      'fa-brands fa-paypal',
+      venmo:       'fa-brands fa-vimeo-v',
+      patreon:     'fa-brands fa-patreon',
+      kick:        'fa-solid fa-kick',
+      link:        'fa-solid fa-link'
+    };
+
+    const svgPlatforms = ['cashapp','discord','facebook','instagram','kick','snapchat','tiktok','twitch','twitter','youtube','paypal','venmo','xbox','playstation','steam','patreon','github',''];
+
+    // Build social items
+    if (socials.length === 0) {
+      container.innerHTML = '<div class="text-gray-400">No socials added</div>';
+    } else {
+      socials.forEach(soc => {
+        const item = document.createElement('div');
+        item.className = 'social-item';
+
+        // Text style (applies to handle)
+        let textStyle = `color: ${textColor};`;
+        if (shadowEnabled) textStyle += ` text-shadow: 0 0 ${shadowBlur}px ${shadowColor};`;
+        if (outlineEnabled) textStyle += ` -webkit-text-stroke: ${outlineWidth}px ${outlineColor}; text-stroke: ${outlineWidth}px ${outlineColor};`;
+
+        // Icon logic: SVG or FA
+        let iconHtml = '';
+        const platform = soc.platform;
+
+        if (useSvg && svgPlatforms.includes(platform)) {
+          const svgName = platform === 'twitter' ? 'x' : platform;
+          iconHtml = `<img src="/bacontools/images/${svgName}.svg" alt="${platform}">`;
+        } else {
+          // FA fallback
+          let iconStyle = `color: ${iconColor};`;
+          if (shadowEnabled)   iconStyle += ` text-shadow: 0 0 ${shadowBlur}px ${shadowColor};`;
+          if (outlineEnabled)  iconStyle += ` -webkit-text-stroke: ${outlineWidth}px ${outlineColor}; text-stroke: ${outlineWidth}px ${outlineColor};`;
+
+          const faClass = faClasses[platform] || 'fa-solid fa-question';
+          iconHtml = `<i class="${faClass}" style="${iconStyle}"></i>`;
+        }
+
+        item.innerHTML = `
+          ${iconHtml}
+          <span style="${textStyle}">${soc.handle}</span>
+        `;
+
+        container.appendChild(item);
+      });
+
+      let current = 0;
+      const items = container.querySelectorAll('.social-item');
+
+      function showNext() {
+        items.forEach(item => {
+          item.style.display = 'none';
+          item.classList.remove('anim-fade','anim-slide-left','anim-slide-right','anim-zoom','anim-bounce');
+          item.style.animation = 'none';
+          item.offsetHeight; // reflow
+        });
+
+        const currentItem = items[current];
+        if (currentItem) {
+          currentItem.style.display = 'flex';
+          currentItem.classList.add(`anim-${anim}`);
+
+          currentItem.style.animation = 'none';
+          currentItem.offsetHeight;
+          currentItem.style.animation = '';
+        }
+
+        current = (current + 1) % items.length;
+      }
+
+      showNext();
+      setInterval(showNext, interval);
+    }
+  </script>
+</body>
+</html>

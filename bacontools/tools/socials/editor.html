@@ -1,0 +1,411 @@
+<div class="max-w-5xl my-8 mx-auto px-4 py-6 bg-gray-800 rounded-xl border border-gray-700">
+  <div class="flex items-center justify-between mb-6">
+    <button id="dash" class="text-indigo-400 hover:text-indigo-300 flex items-center gap-2 text-2xl">
+      <i class="fa-solid fa-arrow-rotate-left"></i>
+    </button>
+    <h2 class="text-3xl font-bold text-center flex-1 flex items-center justify-center gap-3">
+      <div class="hidden sm:flex"><i class="fa-solid fa-share-nodes text-indigo-400 text-4xl"></i></div> Socials Rotator
+    </h2>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+    <!-- LEFT: Controls -->
+    <div class="space-y-6">
+      <!-- Social Handles List -->
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Social Handles</label>
+        <div id="socials-list" class="space-y-4 mb-4"></div>
+
+        <!-- Add new social row -->
+        <div class="flex flex-col md:flex-row gap-4 items-start md:items-end">
+          <div class="w-full md:flex-1">
+            <label class="block text-xs text-gray-400 mb-1">Platform / Icon</label>
+            <select id="new-platform" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white">
+              <option value="twitter">𝕏 (Twitter/X)</option>
+              <option value="twitch">Twitch</option>
+              <option value="youtube">YouTube</option>
+              <option value="discord">Discord</option>
+              <option value="tiktok">TikTok</option>
+              <option value="instagram">Instagram</option>
+              <option value="facebook">Facebook</option>
+              <option value="whatsapp">Whatsapp</option>
+              <option value="steam">Steam</option>
+              <option value="xbox">Xbox</option>
+              <option value="playstation">Playstation</option>
+              <option value="snapchat">Snapchat</option>
+              <option value="github">Github</option>
+              <option value="cashapp">Cashapp</option>
+              <option value="paypal">Paypal</option>
+              <option value="venmo">Venmo</option>
+              <option value="patreon">Patreon</option>
+              <option value="kick">Kick</option>
+              <option value="link">Custom Link</option>
+            </select>
+          </div>
+          <div class="w-full md:flex-1">
+            <label class="block text-xs text-gray-400 mb-1">Handle / Text</label>
+            <input id="new-handle" type="text" placeholder="@heirofbacon" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white">
+          </div>
+          <button id="add-social" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium w-full md:w-auto"> + Add </button>
+        </div>
+      </div>
+
+      <!-- Global Animation & Font Family -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1">Animation (all entries)</label>
+          <select id="global-anim" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white">
+            <option value="fade">Fade in</option>
+            <option value="slide-left">Slide from left</option>
+            <option value="slide-right">Slide from right</option>
+            <option value="zoom">Zoom in</option>
+            <option value="bounce">Bounce</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1">Font Family</label>
+          <select id="font" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white">
+            <option value="sans-serif">Sans Serif (default)</option>
+            <option value="Arial">Arial</option>
+            <option value="Impact">Impact</option>
+            <option value="Roboto">Roboto</option>
+            <option value="Montserrat">Montserrat</option>
+            <option value="Bebas Neue">Bebas Neue</option>
+            <option value="Courier New">Courier New</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Text & Icon Color -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1">Text Color</label>
+          <div class="flex items-center gap-3">
+            <input type="color" id="text-color" value="#ffffff" class="w-10 h-10 rounded cursor-pointer bg-transparent border border-gray-600">
+            <input type="text" id="text-color-hex" value="#ffffff" class="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white text-sm">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1">Icon Color</label>
+          <div class="flex items-center gap-3">
+            <input type="color" id="icon-color" value="#ffffff" class="w-10 h-10 rounded cursor-pointer bg-transparent border border-gray-600">
+            <input type="text" id="icon-color-hex" value="#ffffff" class="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white text-sm">
+          </div>
+        </div>
+      </div>
+
+      <!-- New: SVG Option -->
+      <div class="flex items-center gap-2">
+        <input type="checkbox" id="use-svg" checked class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-600 rounded">
+        <label for="use-svg" class="text-sm font-medium text-gray-300">Use SVG Icons (disables icon color)</label>
+      </div>
+
+      <!-- Size & Interval -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1">Size (px)</label>
+          <input id="size" type="number" value="40" min="16" max="120" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1">Interval (seconds)</label>
+          <input id="interval" type="number" value="5" min="1" max="60" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white">
+        </div>
+      </div>
+
+      <!-- Shadow -->
+      <div>
+        <div class="flex items-center gap-2 mb-2">
+          <input type="checkbox" id="shadow-enabled" checked class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-600 rounded">
+          <label for="shadow-enabled" class="text-sm font-medium text-gray-300">Text Shadow</label>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs text-gray-400 mb-1">Shadow Color</label>
+            <input type="color" id="shadow-color" value="#000000" class="w-full h-10 rounded cursor-pointer bg-transparent border border-gray-600">
+          </div>
+          <div>
+            <label class="block text-xs text-gray-400 mb-1">Blur Radius</label>
+            <input type="range" id="shadow-blur" min="0" max="20" value="8" class="w-full">
+            <span id="shadow-blur-value" class="text-xs text-gray-400">8px</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Outline -->
+      <div>
+        <div class="flex items-center gap-2 mb-2">
+          <input type="checkbox" id="outline-enabled" class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-600 rounded">
+          <label for="outline-enabled" class="text-sm font-medium text-gray-300">Text Outline</label>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs text-gray-400 mb-1">Outline Color</label>
+            <input type="color" id="outline-color" value="#000000" class="w-full h-10 rounded cursor-pointer bg-transparent border border-gray-600" disabled>
+          </div>
+          <div>
+            <label class="block text-xs text-gray-400 mb-1">Width (px)</label>
+            <input type="number" id="outline-width" min="1" max="5" value="2" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white" disabled>
+          </div>
+        </div>
+      </div>
+
+      <!-- Position -->
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-1">Position</label>
+        <select id="position" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white">
+          <option value="top-left">Top Left</option>
+          <option value="top-center">Top Center</option>
+          <option value="top-right">Top Right</option>
+          <option value="bottom-left">Bottom Left</option>
+          <option value="bottom-center">Bottom Center</option>
+          <option value="bottom-right">Bottom Right</option>
+          <option value="center">Center</option>
+        </select>
+      </div>
+
+      <!-- Margins -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">Horizontal Margin (px)</label>
+          <input id="marginX" type="number" value="20" min="0" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white">
+        </div>
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">Vertical Margin (px)</label>
+          <input id="marginY" type="number" value="20" min="0" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white">
+        </div>
+      </div>
+
+      <!-- Canvas size -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1">Canvas Width (px)</label>
+          <input id="w" type="number" value="1920" min="640" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1">Canvas Height (px)</label>
+          <input id="h" type="number" value="1080" min="360" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white">
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Preview -->
+    <div class="space-y-6">
+      <div>
+        <h2 class="text-xl font-semibold mb-3">Live Preview</h2>
+        <div id="previewWrapper" class="relative mx-auto bg-gray-900 rounded-xl overflow-hidden border border-gray-700 shadow-2xl" style="width: 100%; max-width: 960px; aspect-ratio: 16 / 9;">
+          <iframe id="preview-frame" src="/bacontools/tools/socials/overlay.html" frameborder="0" class="absolute inset-0 w-full h-full origin-top-left"></iframe>
+        </div>
+      </div>
+      <label class="block text-sm font-medium text-gray-300 mb-2">OBS URL (copy this)</label>
+      <div class="flex">
+        <input id="url-box" type="text" readonly class="flex-1 bg-gray-700 border border-gray-600 rounded-l px-3 py-2 text-gray-300">
+        <button id="copy-btn" class="bg-indigo-400 hover:bg-indigo-300 px-4 rounded-r text-white">Copy URL</button>
+      </div>
+      <div class="mt-4 text-gray-400 text-sm">
+        <p class="font-semibold mb-2">How to use:</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Customize the options — changes update live in the preview.</li>
+          <li>Copy the URL below and paste it into <a href="https://obsproject.com/" target="_blank" class="text-indigo-400 hover:text-indigo-300">OBS</a> as a Browser Source. </li>
+          <li>Match the canvas size to your stream resolution (e.g. 1920x1080).</li>
+          <li>If the preview looks cropped, try refreshing the page or adjusting size.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function() {
+  const elements = {
+    socialsList: document.getElementById('socials-list'),
+    platformSelect: document.getElementById('new-platform'),
+    handleInput: document.getElementById('new-handle'),
+    addSocialBtn: document.getElementById('add-social'),
+    globalAnimSelect: document.getElementById('global-anim'),
+    fontSelect: document.getElementById('font'),
+    textColor: document.getElementById('text-color'),
+    textColorHex: document.getElementById('text-color-hex'),
+    iconColor: document.getElementById('icon-color'),
+    iconColorHex: document.getElementById('icon-color-hex'),
+    useSvg: document.getElementById('use-svg'),
+    size: document.getElementById('size'),
+    intervalInput: document.getElementById('interval'),
+    shadowEnabled: document.getElementById('shadow-enabled'),
+    shadowColor: document.getElementById('shadow-color'),
+    shadowBlur: document.getElementById('shadow-blur'),
+    outlineEnabled: document.getElementById('outline-enabled'),
+    outlineColor: document.getElementById('outline-color'),
+    outlineWidth: document.getElementById('outline-width'),
+    width: document.getElementById('w'),
+    height: document.getElementById('h'),
+    position: document.getElementById('position'),
+    marginX: document.getElementById('marginX'),
+    marginY: document.getElementById('marginY'),
+    previewFrame: document.getElementById('preview-frame'),
+    urlBox: document.getElementById('url-box'),
+    copyBtn: document.getElementById('copy-btn')
+  };
+
+  let socials = [];
+
+  function renderSocials() {
+    elements.socialsList.innerHTML = '';
+    socials.forEach((soc, i) => {
+      const row = document.createElement('div');
+      row.className = 'flex items-center gap-3 bg-gray-700 p-3 rounded-lg';
+      row.innerHTML = `
+        <span class="text-gray-300 flex-1"><i class="fab fa-${soc.platform} mr-2"></i> ${soc.handle}</span>
+        <button class="text-red-400 hover:text-red-300" data-idx="${i}"><i class="fas fa-trash"></i></button>
+      `;
+      elements.socialsList.appendChild(row);
+      row.querySelector('button').onclick = () => {
+        socials.splice(i, 1);
+        renderSocials();
+        updatePreview();
+      };
+    });
+  }
+
+  if (elements.addSocialBtn) {
+    elements.addSocialBtn.onclick = () => {
+      const platform = elements.platformSelect?.value?.trim();
+      const handle = elements.handleInput?.value?.trim();
+      if (platform && handle) {
+        socials.push({ platform, handle });
+        renderSocials();
+        elements.handleInput.value = '';
+        updatePreview();
+      }
+    };
+  }
+
+  // Color pickers sync
+  ['textColor', 'iconColor'].forEach(key => {
+    const picker = elements[key];
+    const hex = elements[`${key}Hex`];
+    if (picker && hex) {
+      picker.oninput = () => { hex.value = picker.value; updatePreview(); };
+      hex.oninput = e => {
+        if (/^#[0-9A-Fa-f]{6}$/i.test(e.target.value)) {
+          picker.value = e.target.value;
+          updatePreview();
+        }
+      };
+    }
+  });
+
+  // Disable icon color when SVG is chosen
+  if (elements.useSvg) {
+    elements.useSvg.onchange = () => {
+      const disabled = elements.useSvg.checked;
+      if (elements.iconColor)     elements.iconColor.disabled     = disabled;
+      if (elements.iconColorHex)  elements.iconColorHex.disabled  = disabled;
+      updatePreview();
+    };
+  }
+
+  // Shadow / outline toggles
+  if (elements.shadowEnabled) {
+    elements.shadowEnabled.onchange = () => {
+      const en = elements.shadowEnabled.checked;
+      if (elements.shadowColor) elements.shadowColor.disabled = !en;
+      if (elements.shadowBlur)  elements.shadowBlur.disabled  = !en;
+      updatePreview();
+    };
+  }
+  if (elements.outlineEnabled) {
+    elements.outlineEnabled.onchange = () => {
+      const en = elements.outlineEnabled.checked;
+      if (elements.outlineColor) elements.outlineColor.disabled = !en;
+      if (elements.outlineWidth) elements.outlineWidth.disabled = !en;
+      updatePreview();
+    };
+  }
+
+  // Shadow blur display
+  if (elements.shadowBlur) {
+    elements.shadowBlur.oninput = () => {
+      document.getElementById('shadow-blur-value').textContent = elements.shadowBlur.value + 'px';
+      updatePreview();
+    };
+  }
+
+  function updatePreview() {
+    if (!elements.previewFrame || !elements.urlBox) return;
+
+    const params = new URLSearchParams({
+      socials:      encodeURIComponent(JSON.stringify(socials)),
+      size:         elements.size?.value          || 40,
+      interval:     elements.intervalInput?.value || 5,
+      anim:         elements.globalAnimSelect?.value || 'fade',
+      font:         elements.fontSelect?.value    || 'impact',
+      textColor:    elements.textColor?.value     || '#ffffff',
+      iconColor:    elements.iconColor?.value     || '#ffffff',
+      shadowEnabled: elements.shadowEnabled?.checked ? '1' : '0',
+      shadowColor:  elements.shadowColor?.value   || '#000000',
+      shadowBlur:   elements.shadowBlur?.value    || 8,
+      outlineEnabled: elements.outlineEnabled?.checked ? '1' : '0',
+      outlineColor: elements.outlineColor?.value  || '#000000',
+      outlineWidth: elements.outlineWidth?.value  || 2,
+      w:            elements.width?.value         || 1920,
+      h:            elements.height?.value        || 1080,
+      position:     elements.position?.value      || 'bottom-right',
+      marginX:      elements.marginX?.value       || 20,
+      marginY:      elements.marginY?.value       || 20,
+      useSvg:       elements.useSvg?.checked      ? '1' : '0'
+    });
+
+    const src = `/bacontools/tools/socials/overlay.html?${params}`;
+    elements.previewFrame.src = src;
+    elements.urlBox.value = location.origin + src;
+
+    // Scale to fit
+    setTimeout(() => {
+      const realW = parseInt(elements.width?.value) || 1920;
+      const realH = parseInt(elements.height?.value) || 1080;
+      const wrapper = document.getElementById('previewWrapper');
+      if (wrapper) {
+        const scale = Math.min(1, wrapper.clientWidth / realW, wrapper.clientHeight / realH);
+        elements.previewFrame.style.transform = `scale(${scale})`;
+        elements.previewFrame.style.width  = realW + 'px';
+        elements.previewFrame.style.height = realH + 'px';
+      }
+    }, 300);
+  }
+
+  // Attach listeners to everything that changes preview
+  const watched = [
+    'size','interval','global-anim','font','text-color','text-color-hex',
+    'icon-color','icon-color-hex','shadow-enabled','shadow-color','shadow-blur',
+    'outline-enabled','outline-color','outline-width','w','h','position','marginX','marginY',
+    'use-svg'
+  ];
+
+  watched.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', updatePreview);
+      el.addEventListener('change', updatePreview);
+    }
+  });
+
+  // Initial load
+  renderSocials();
+  updatePreview();
+
+  // Dashboard back button
+  document.getElementById('dash')?.addEventListener('click', () => {
+    document.getElementById('tool-container')?.classList.add('hidden');
+    document.getElementById('dashboard')?.classList.remove('hidden');
+  });
+
+  // Copy button
+  if (elements.copyBtn) {
+    elements.copyBtn.onclick = () => {
+      elements.urlBox?.select();
+      document.execCommand('copy');
+      elements.copyBtn.innerHTML = '<i class="fas fa-check mr-2"></i>Copied!';
+      setTimeout(() => elements.copyBtn.innerHTML = 'Copy URL', 1800);
+    };
+  }
+})();
+</script>

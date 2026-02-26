@@ -1,0 +1,181 @@
+<div class="max-w-5xl my-8 mx-auto px-4 py-6 bg-gray-800 rounded-xl border border-gray-700">
+  <div class="flex items-center justify-between mb-6">
+    <button id="dash" class="text-indigo-400 hover:text-indigo-300 flex items-center gap-2 text-2xl">
+      <i class="fa-solid fa-arrow-rotate-left"></i>
+    </button>
+    <h2 class="text-3xl font-bold text-center flex-1 flex items-center justify-center gap-3">
+      <img src="../bacontools/images/dvd.svg" alt="DVD Logo" class="h-0 w-0 md:w-20 md:h-20">
+       Bouncing Watermark
+    </h2>
+  </div>
+  <div class="grid md:grid-cols-2 gap-10">
+    <!-- LEFT: Controls -->
+    <div class="space-y-6">
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-1">Text</label>
+        <input id="text" type="text" value="@heirofbacon 🥓" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-1">Font Size (px)</label>
+        <input id="size" type="number" value="50" min="20" max="200" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-1">Opacity (0–1)</label>
+        <input id="opacity" type="number" step="0.05" min="0" max="1" value="0.4" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-1">Speed</label>
+        <input id="speed" type="number" step="0.5" min="0.5" max="10" value="2" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-1">Font Family</label>
+        <select id="font" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+          <option value="Impact">Impact</option>
+          <option value="Arial">Arial</option>
+          <option value="Arial Black">Arial Black</option>
+          <option value="Verdana">Verdana</option>
+          <option value="Helvetica">Helvetica</option>
+          <option value="Tahoma">Tahoma</option>
+          <option value="Courier New">Courier New</option>
+          <option value="Georgia">Georgia</option>
+          <option value="system-ui">System UI (modern default)</option>
+          <option value="'Bebas Neue', sans-serif">Bebas Neue</option>
+          <option value="'Montserrat', sans-serif">Montserrat</option>
+        </select>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="flex items-center">
+          <input type="checkbox" id="iconEnabled" class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-600 rounded">
+          <label for="iconEnabled" class="ml-2 text-sm font-medium text-gray-300">Show Icon</label>
+        </div>
+        <div id="iconGroup" class="flex-1" style="display: none;">
+          <label class="block text-sm font-medium text-gray-300 mb-1">Icon</label>
+          <select id="icon" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+            <option value="fa-solid fa-bacon">🥓 Bacon</option>
+            <option value="fa-brands fa-x-twitter">𝕏 X / Twitter</option>
+            <option value="fa-brands fa-twitch">Twitch</option>
+            <option value="fa-brands fa-youtube">YouTube</option>
+            <option value="fa-brands fa-discord">Discord</option>
+            <option value="fa-brands fa-tiktok">TikTok</option>
+            <option value="fa-brands fa-paypal">PayPal</option>
+            <option value="fa-brands fa-venmo-v">Venmo</option>
+            <option value="fa-brands fa-cash-app">Cash App</option>
+            <option value="dvd-logo">DVD Logo</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1">Canvas Width (px)</label>
+          <input id="width" type="number" value="1920" min="640" step="10" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1">Canvas Height (px)</label>
+          <input id="height" type="number" value="1080" min="360" step="10" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+        </div>
+      </div>
+      
+    </div>
+    <!-- RIGHT: Preview -->
+    <div class="space-y-6">
+      <div>
+        <h2 class="text-xl font-semibold mb-3">Live Preview</h2>
+        <div id="previewWrapper" class="relative mx-auto bg-gray-900 rounded-xl overflow-hidden border border-gray-700 shadow-2xl" style="width: 100%; max-width: 960px; aspect-ratio: 16 / 9;">
+          <iframe id="previewFrame" src="/bacontools/tools/socials/overlay.html" frameborder="0" class="absolute inset-0 w-full h-full origin-top-left"></iframe>
+        </div>
+      </div>
+      <label class="block text-sm font-medium text-gray-300 mb-2">OBS URL (copy this)</label>
+      <div class="flex">
+        <input id="urlBox" type="text" readonly class="flex-1 bg-gray-700 border border-gray-600 rounded-l px-3 py-2 text-gray-300">
+        <button id="copyBtn" class="bg-indigo-400 hover:bg-indigo-300 px-4 rounded-r text-white">Copy</button>
+      </div>
+      <div class="mt-4 text-gray-400 text-sm">
+        <p class="font-semibold mb-2">How to use:</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Customize the options — changes update live in the preview.</li>
+          <li>Copy the URL below and paste it into <a href="https://obsproject.com/" target="_blank" class="text-indigo-400 hover:text-indigo-300">OBS</a> as a Browser Source. </li>
+          <li>Match the canvas size to your stream resolution (e.g. 1920x1080).</li>
+          <li>If the preview looks cropped, try refreshing the page or adjusting size.</li>
+        </ul>
+      </div>
+    </div>
+    <script>
+      (function() {
+        const inputs = {
+          text: document.getElementById('text'),
+          size: document.getElementById('size'),
+          opacity: document.getElementById('opacity'),
+          speed: document.getElementById('speed'),
+          width: document.getElementById('width'),
+          height: document.getElementById('height'),
+          font: document.getElementById('font'),
+          iconEnabled: document.getElementById('iconEnabled'),
+          icon: document.getElementById('icon'),
+        };
+        const previewFrame = document.getElementById('previewFrame');
+        const previewWrapper = document.getElementById('previewWrapper');
+        const urlBox = document.getElementById('urlBox');
+        const copyBtn = document.getElementById('copyBtn');
+
+        function updatePreview() {
+          const params = new URLSearchParams({
+            text: inputs.text.value.trim() || '@heirofbacon 🥓',
+            size: inputs.size.value,
+            opacity: inputs.opacity.value,
+            speed: inputs.speed.value,
+            w: inputs.width.value,
+            h: inputs.height.value,
+            font: inputs.font.value,
+            iconEnabled: inputs.iconEnabled.checked ? '1' : '0',
+            icon: inputs.iconEnabled.checked ? inputs.icon.value : '',
+          });
+          const relativeSrc = `/bacontools/tools/watermark/overlay.html?${params}`;
+          previewFrame.src = relativeSrc;
+          const fullUrl = new URL(relativeSrc, window.location.origin).href;
+          urlBox.value = fullUrl;
+          // ────────────────────────────────────────────────────────
+          // Scale the iframe to show full canvas in the preview wrapper
+          setTimeout(() => {
+            const realW = parseInt(inputs.width.value) || 1920;
+            const realH = parseInt(inputs.height.value) || 1080;
+            const containerW = previewWrapper.clientWidth;
+            const containerH = previewWrapper.clientHeight;
+            const scaleX = containerW / realW;
+            const scaleY = containerH / realH;
+            const scale = Math.min(scaleX, scaleY); // keep aspect ratio, fit inside
+            previewFrame.style.transform = `scale(${scale})`;
+            previewFrame.style.width = `${realW}px`;
+            previewFrame.style.height = `${realH}px`;
+          }, 300); // small delay so iframe loads a bit first
+        }
+        // Live update
+        Object.values(inputs).forEach(input => {
+          input.addEventListener('input', updatePreview);
+        });
+        // Copy
+        copyBtn.onclick = () => {
+          urlBox.select();
+          document.execCommand('copy');
+          copyBtn.innerHTML = ' < i class = "fas fa-check mr-2" > < /i>Copied!';
+          setTimeout(() => copyBtn.textContent = 'Copy', 1800);
+        };
+        // First run + also scale when window resizes
+        updatePreview();
+        window.addEventListener('resize', updatePreview);
+        // Show/hide icon selector
+        const iconEnabled = document.getElementById('iconEnabled');
+        const iconGroup = document.getElementById('iconGroup');
+        iconEnabled.addEventListener('change', () => {
+          iconGroup.style.display = iconEnabled.checked ? 'block' : 'none';
+          updatePreview(); // refresh immediately
+        });
+        // Back button to return to dashboard
+        document.getElementById('dash').addEventListener('click', () => {
+          document.getElementById('tool-container').innerHTML = '';
+          document.getElementById('tool-container').classList.add('hidden');
+          document.getElementById('dashboard').classList.remove('hidden');
+        });
+        // If already checked on load (unlikely, but safe)
+        if (iconEnabled.checked) iconGroup.style.display = 'block';
+      })();
+    </script>

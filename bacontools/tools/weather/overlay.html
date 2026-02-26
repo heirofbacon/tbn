@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Weather Overlay</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
+  <link rel="stylesheet" href="/fontawesome/css/all.min.css">
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        height: 100%;
+        background: transparent;
+      }
+
+      #weather-box {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-size: 40px;
+        white-space: nowrap;
+        pointer-events: none;
+        user-select: none;
+        transition: all 0.3s ease;
+      }
+
+      .wi {
+        font-size: 1.8em;
+      }
+
+      .style-basic {
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+      }
+
+      .style-gradient {
+        background: linear-gradient(135deg, #1e40af, #3b82f6);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .style-blur {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="weather-box"></div>
+    <script>
+      const params = new URLSearchParams(location.search);
+      const loc = decodeURIComponent(params.get('location') || 'Phoenix').split(',')[0].trim(); // remove commas / state
+      const style = params.get('style') || 'basic';
+      const refresh = (parseInt(params.get('refresh')) || 15) * 60 * 1000;
+      const fontSize = parseInt(params.get('fontSize')) || 40;
+      const textColor = params.get('textColor') || '#ffffff';
+      const bgColor = params.get('bgColor') || '#000000';
+      const bgOpacity = parseFloat(params.get('bgOpacity')) || 0.6;
+      const canvasW = parseInt(params.get('w')) || 1920;
+      const canvasH = parseInt(params.get('h')) || 1080;
+      const position = params.get('position') || 'center';
+      const marginX = parseInt(params.get('marginX')) || 20;
+      const marginY = parseInt(params.get('marginY')) || 20;
+      document.body.style.width = canvasW + 'px';
+      document.body.style.height = canvasH + 'px';
+      const box = document.getElementById('weather-box');
+      box.style.fontSize = fontSize + 'px';
+      box.style.color = textColor;
+      box.style.background = bgColor + Math.round(bgOpacity * 255).toString(16).padStart(2, '0'); // append alpha to hex
+      box.className = `style-${style}`;
+      // Position logic
+      let posTop = '50%';
+      let posLeft = '50%';
+      let posRight = 'auto';
+      let posBottom = 'auto';
+      let posTranslateX = '-50%';
+      let posTranslateY = '-50%';
+    if (position === 'top-left') {
+      posTop = marginY + 'px'; posLeft = marginX + 'px';
+      posTranslateX = '0'; posTranslateY = '0';
+    } else if (position === 'top-center') {
+      posTop = marginY + 'px'; posLeft = '50%';
+      posTranslateX = '-50%'; posTranslateY = '0';
+    } else if (position === 'top-right') {
+      posTop = marginY + 'px'; posRight = marginX + 'px'; posLeft = 'auto';
+      posTranslateX = '0'; posTranslateY = '0';
+    } else if (position === 'bottom-left') {
+      posBottom = marginY + 'px'; posTop = 'auto'; posLeft = marginX + 'px';
+      posTranslateX = '0'; posTranslateY = '0';
+    } else if (position === 'bottom-center') {
+      posBottom = marginY + 'px'; posTop = 'auto'; posLeft = '50%';
+      posTranslateX = '-50%'; posTranslateY = '0';
+    } else if (position === 'bottom-right') {
+      posBottom = marginY + 'px'; posTop = 'auto'; posRight = marginX + 'px'; posLeft = 'auto';
+      posTranslateX = '0'; posTranslateY = '0';
+    }
+      box.style.position = 'absolute';
+      box.style.top = posTop;
+      box.style.left = posLeft;
+      box.style.right = posRight;
+      box.style.bottom = posBottom;
+      box.style.transform = `translate(${posTranslateX}, ${posTranslateY})`;
+      // Weather icons & descriptions
+      const icons = {
+        0: 'wi-day-sunny',
+        1: 'wi-day-cloudy',
+        2: 'wi-day-cloudy',
+        3: 'wi-cloudy',
+        45: 'wi-fog',
+        51: 'wi-showers',
+        61: 'wi-rain',
+        71: 'wi-snow',
+        80: 'wi-showers',
+        95: 'wi-thunderstorm'
+      };
+      const desc = {
+        0: 'Clear',
+        1: 'Mostly clear',
+        2: 'Partly cloudy',
+        3: 'Overcast',
+        45: 'Fog',
+        51: 'Drizzle',
+        61: 'Rain',
+        71: 'Snow',
+        80: 'Showers',
+        95: 'Thunderstorm'
+      };
+      async function loadWeather() {
+        try {
+          const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(loc)}&count=1`);
+          const geo = await geoRes.json();
+          if (!geo.results?.length) throw new Error('Location not found');
+          const {
+            latitude,
+            longitude
+          } = geo.results[0];
+          const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code&temperature_unit=fahrenheit`);
+          const weather = await weatherRes.json();
+          const current = weather.current;
+          const temp = Math.round(current.temperature_2m);
+          const code = current.weather_code;
+          box.innerHTML = `
+						<i class="wi ${icons[code] || 'wi-day-sunny'}"></i> ${temp}°F – ${desc[code] || 'Unknown'} in ${loc}`;
+        } catch (err) {
+          box.innerHTML = `Weather for ${loc} – Error loading`;
+          console.error(err);
+        }
+      }
+      loadWeather();
+      setInterval(loadWeather, refresh);
+    </script>
+  </body>
+</html>
