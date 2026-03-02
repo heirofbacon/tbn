@@ -156,7 +156,7 @@
         copyBtn.onclick = () => {
           urlBox.select();
           document.execCommand('copy');
-          copyBtn.innerHTML = ' < i class = "fas fa-check mr-2" > < /i>Copied!';
+          copyBtn.innerHTML = '<i class = "fas fa-check mr-2"></i>Copied!';
           setTimeout(() => copyBtn.textContent = 'Copy', 1800);
         };
         // First run + also scale when window resizes
@@ -178,4 +178,5 @@
         // If already checked on load (unlikely, but safe)
         if (iconEnabled.checked) iconGroup.style.display = 'block';
       })();
+
     </script>
