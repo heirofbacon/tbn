@@ -204,7 +204,7 @@
     elements.copyBtn.addEventListener('click', () => {
       elements.urlBox.select();
       document.execCommand('copy');
-      elements.copyBtn.innerHTML = ' < i class = "fas fa-check mr-2" > < /i>Copied!';
+      elements.copyBtn.innerHTML = 'Copied!';
       setTimeout(() => elements.copyBtn.textContent = 'Copy', 1800);
     });
     // Back button
@@ -214,4 +214,5 @@
       document.getElementById('dashboard').classList.remove('hidden');
     });
   })();
+
 </script>
