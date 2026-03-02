@@ -156,7 +156,7 @@
         copyBtn.onclick = () => {
           urlBox.select();
           document.execCommand('copy');
-          copyBtn.innerHTML = '<i class = "fas fa-check mr-2"></i>Copied!';
+          copyBtn.innerHTML = 'Copied!';
           setTimeout(() => copyBtn.textContent = 'Copy', 1800);
         };
         // First run + also scale when window resizes
@@ -180,3 +180,4 @@
       })();
 
     </script>
+
