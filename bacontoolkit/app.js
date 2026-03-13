@@ -3,7 +3,10 @@ const gC = document.getElementById('guide-container');
 const tC = document.getElementById('tool-container');
 const scrA = document.getElementById('main-scroll-area');
 
+let activeTool = 'guide'; 
+
 function loadTool(target) {
+    activeTool = target; // Update tracking
     links.forEach(l => {
         l.classList.remove('active');
         if (l.dataset.target === target) l.classList.add('active');
@@ -58,4 +61,66 @@ if (supportBtns.length > 0) {
             btn.classList.add('animate-tada');
         });
     }, 8000); // Triggers every 8 seconds
+}
+
+// ==========================================
+// SHHHHHHHHHHHHH
+// ==========================================
+const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+let konamiIndex = 0;
+
+document.addEventListener('keydown', (e) => {
+    // 1. Ignore if user is actively typing in an input field or dropdown
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
+        konamiIndex = 0;
+        return;
+    }
+
+    // 2. Only allow if they are actually on a tool page, not the guide
+    if (activeTool === 'guide') return;
+
+    // 3. Match the key (ignoring uppercase vs lowercase for 'B' and 'A')
+    const key = e.key;
+    const expectedKey = konamiCode[konamiIndex];
+    const isMatch = (key.toLowerCase() === expectedKey.toLowerCase()) || (key === expectedKey);
+
+    if (isMatch) {
+        konamiIndex++;
+        if (konamiIndex === konamiCode.length) {
+            konamiIndex = 0; // Reset counter
+            triggerGame(activeTool); // Fire!
+        }
+    } else {
+        konamiIndex = 0; // Reset if they mess up the sequence
+    }
+});
+
+function triggerGame(tool) {
+    const frame = document.getElementById('previewFrame');
+    if (!frame) return;
+
+    // Route the tools to their specific games
+    let gamePath = '';
+    if (tool === 'weather') gamePath = './secret/contra.html';
+    else if (tool === 'watermark') gamePath = './secret/superc.html';
+    else if (tool === 'socials') gamePath = './secret/tmnt.html';
+
+    if (gamePath) {
+        frame.src = gamePath;
+        
+        // Visual feedback on the Copy button to let them know it worked
+        const copyBtn = document.getElementById('copyBtn');
+        if (copyBtn) {
+            const oldTxt = copyBtn.textContent;
+            copyBtn.textContent = '🕹️ 30 LIVES ADDED!';
+            copyBtn.classList.remove('bg-emerald-600', 'hover:bg-emerald-500');
+            copyBtn.classList.add('bg-red-600', 'hover:bg-red-500');
+            
+            setTimeout(() => {
+                copyBtn.textContent = oldTxt;
+                copyBtn.classList.remove('bg-red-600', 'hover:bg-red-500');
+                copyBtn.classList.add('bg-emerald-600', 'hover:bg-emerald-500');
+            }, 3000);
+        }
+    }
 }
