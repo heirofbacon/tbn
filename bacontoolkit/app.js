@@ -101,9 +101,9 @@ function triggerGame(tool) {
 
     // Route the tools to their specific games
     let gamePath = '';
-    if (tool === 'weather') gamePath = './secret/contra.html';
-    else if (tool === 'watermark') gamePath = './secret/superc.html';
-    else if (tool === 'socials') gamePath = './secret/tmnt.html';
+    if (tool === 'weather') gamePath = '../secret/contra.html';
+    else if (tool === 'watermark') gamePath = '../secret/superc.html';
+    else if (tool === 'socials') gamePath = '../secret/tmnt.html';
 
     if (gamePath) {
         frame.src = gamePath;
@@ -124,3 +124,4 @@ function triggerGame(tool) {
         }
     }
 }
+
