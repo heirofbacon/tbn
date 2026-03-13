@@ -3,7 +3,7 @@ const gC = document.getElementById('guide-container');
 const tC = document.getElementById('tool-container');
 const scrA = document.getElementById('main-scroll-area');
 
-let activeTool = 'guide'; 
+let activeTool = 'guide'; // Track the current tool for the Easter Eggs
 
 function loadTool(target) {
     activeTool = target; // Update tracking
@@ -64,7 +64,7 @@ if (supportBtns.length > 0) {
 }
 
 // ==========================================
-// SHHHHHHHHHHHHH
+// KONAMI CODE EASTER EGG
 // ==========================================
 const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
 let konamiIndex = 0;
@@ -108,6 +108,15 @@ function triggerGame(tool) {
     if (gamePath) {
         frame.src = gamePath;
         
+        // ALLOW INTERACTION: Strip the CSS block and auto-focus the frame!
+        frame.classList.remove('pointer-events-none');
+        frame.classList.add('pointer-events-auto');
+        
+        // Give the iframe a tiny delay to load, then force focus on it
+        setTimeout(() => {
+            frame.focus();
+        }, 200);
+        
         // Visual feedback on the Copy button to let them know it worked
         const copyBtn = document.getElementById('copyBtn');
         if (copyBtn) {
@@ -124,4 +133,3 @@ function triggerGame(tool) {
         }
     }
 }
-
