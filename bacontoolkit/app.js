@@ -63,9 +63,8 @@ if (supportBtns.length > 0) {
     }, 8000); // Triggers every 8 seconds
 }
 
-
 // ==========================================
-// KONAMI CODE EASTER EGG (ISOLATED LAYER)
+// SHHHHHHHHHHHHHHH
 // ==========================================
 const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
 let konamiIndex = 0;
@@ -107,7 +106,7 @@ function triggerGame(tool) {
     // Don't trigger if the wrapper is missing or a game is already running
     if (!wrap || document.getElementById('gameFrame')) return;
 
-    // Route the tools to their specific games
+    // Route the tools to their specific games (Using corrected relative path)
     let gamePath = '';
     if (tool === 'weather') gamePath = '../secret/contra.html';
     else if (tool === 'watermark') gamePath = '../secret/superc.html';
@@ -127,22 +126,38 @@ function triggerGame(tool) {
         closeBtn.title = "Close Game";
         closeBtn.className = 'absolute top-3 right-3 z-[60] bg-red-600 hover:bg-red-500 text-white w-8 h-8 rounded-full font-bold flex justify-center items-center shadow-[0_0_15px_rgba(220,38,38,0.8)] transition-transform hover:scale-110';
         
-        // Remove the game elements when clicked
+        // 3. Create a Pop-out / Fullscreen Button
+        const fullBtn = document.createElement('button');
+        fullBtn.innerHTML = '<i class="fas fa-external-link-alt"></i>';
+        fullBtn.title = "Play Fullscreen / Pop-out";
+        fullBtn.className = 'absolute top-3 right-14 z-[60] bg-blue-600 hover:bg-blue-500 text-white w-8 h-8 rounded-full font-bold flex justify-center items-center shadow-[0_0_15px_rgba(37,99,235,0.8)] transition-transform hover:scale-110';
+
+        // Remove the game elements when X is clicked
         closeBtn.onclick = () => {
             gameFrame.remove();
             closeBtn.remove();
+            fullBtn.remove();
+        };
+
+        // Open in new tab and kill the mini-viewer when Pop-out is clicked
+        fullBtn.onclick = () => {
+            window.open(gamePath, '_blank');
+            gameFrame.remove();
+            closeBtn.remove();
+            fullBtn.remove();
         };
 
         // Inject them into the wrapper
         wrap.appendChild(gameFrame);
         wrap.appendChild(closeBtn);
+        wrap.appendChild(fullBtn);
         
-        // 3. Auto-focus the new iframe so the controller/keyboard works immediately
+        // Auto-focus the new iframe so the controller/keyboard works immediately
         setTimeout(() => {
             gameFrame.focus();
         }, 200);
         
-        // 4. Visual feedback on the Copy button
+        // Visual feedback on the Copy button
         const copyBtn = document.getElementById('copyBtn');
         if (copyBtn) {
             const oldTxt = copyBtn.textContent;
