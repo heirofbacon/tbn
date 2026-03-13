@@ -63,41 +63,49 @@ if (supportBtns.length > 0) {
     }, 8000); // Triggers every 8 seconds
 }
 
+
 // ==========================================
-// KONAMI CODE EASTER EGG
+// KONAMI CODE EASTER EGG (ISOLATED LAYER)
 // ==========================================
 const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
 let konamiIndex = 0;
 
 document.addEventListener('keydown', (e) => {
-    // 1. Ignore if user is actively typing in an input field or dropdown
+    // 1. Ignore if user is actively typing in an input field
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
         konamiIndex = 0;
         return;
     }
 
-    // 2. Only allow if they are actually on a tool page, not the guide
+    // 2. Only allow if they are actually on a tool page
     if (activeTool === 'guide') return;
 
-    // 3. Match the key (ignoring uppercase vs lowercase for 'B' and 'A')
+    // 3. Match the key
     const key = e.key;
     const expectedKey = konamiCode[konamiIndex];
     const isMatch = (key.toLowerCase() === expectedKey.toLowerCase()) || (key === expectedKey);
 
     if (isMatch) {
+        // Prevent window scrolling while executing the sequence
+        if (key.startsWith('Arrow')) {
+            e.preventDefault();
+        }
+        
         konamiIndex++;
         if (konamiIndex === konamiCode.length) {
             konamiIndex = 0; // Reset counter
             triggerGame(activeTool); // Fire!
         }
     } else {
-        konamiIndex = 0; // Reset if they mess up the sequence
+        konamiIndex = 0; // Reset if they mess up
     }
 });
 
 function triggerGame(tool) {
-    const frame = document.getElementById('previewFrame');
-    if (!frame) return;
+    const wrap = document.getElementById('previewWrapper');
+    
+    // Don't trigger if the wrapper is missing or a game is already running
+    if (!wrap || document.getElementById('gameFrame')) return;
 
     // Route the tools to their specific games
     let gamePath = '';
@@ -106,18 +114,35 @@ function triggerGame(tool) {
     else if (tool === 'socials') gamePath = '../secret/tmnt.html';
 
     if (gamePath) {
-        frame.src = gamePath;
+        // 1. Create an independent game layer on TOP of the preview
+        const gameFrame = document.createElement('iframe');
+        gameFrame.id = 'gameFrame';
+        gameFrame.src = gamePath;
+        gameFrame.frameBorder = '0';
+        gameFrame.className = 'absolute inset-0 w-full h-full z-[50] pointer-events-auto bg-black';
+
+        // 2. Create an Exit/Close Button
+        const closeBtn = document.createElement('button');
+        closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+        closeBtn.title = "Close Game";
+        closeBtn.className = 'absolute top-3 right-3 z-[60] bg-red-600 hover:bg-red-500 text-white w-8 h-8 rounded-full font-bold flex justify-center items-center shadow-[0_0_15px_rgba(220,38,38,0.8)] transition-transform hover:scale-110';
         
-        // ALLOW INTERACTION: Strip the CSS block and auto-focus the frame!
-        frame.classList.remove('pointer-events-none');
-        frame.classList.add('pointer-events-auto');
+        // Remove the game elements when clicked
+        closeBtn.onclick = () => {
+            gameFrame.remove();
+            closeBtn.remove();
+        };
+
+        // Inject them into the wrapper
+        wrap.appendChild(gameFrame);
+        wrap.appendChild(closeBtn);
         
-        // Give the iframe a tiny delay to load, then force focus on it
+        // 3. Auto-focus the new iframe so the controller/keyboard works immediately
         setTimeout(() => {
-            frame.focus();
+            gameFrame.focus();
         }, 200);
         
-        // Visual feedback on the Copy button to let them know it worked
+        // 4. Visual feedback on the Copy button
         const copyBtn = document.getElementById('copyBtn');
         if (copyBtn) {
             const oldTxt = copyBtn.textContent;
