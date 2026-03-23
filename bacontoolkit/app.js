@@ -1,9 +1,7 @@
 const links = document.querySelectorAll('.nav-link');
-const gC = document.getElementById('guide-container');
-const tC = document.getElementById('tool-container');
 const scrA = document.getElementById('main-scroll-area');
 
-let activeTool = 'guide'; // Track the current tool for the Easter Eggs
+let activeTool = 'home'; // Track the current tool for the Easter Eggs
 
 function loadTool(target) {
     activeTool = target; // Update tracking
@@ -13,13 +11,25 @@ function loadTool(target) {
     });
     scrA.scrollTo(0, 0);
 
-    if (target === 'guide') {
-        tC.classList.add('hidden');
-        tC.innerHTML = '';
-        gC.classList.remove('hidden');
-        window.history.pushState({}, '', window.location.pathname);
-    } else {
-        gC.classList.add('hidden');
+    // 1. Hide ALL containers first to reset state
+    ['home-container', 'commands-container', 'guide-container', 'tool-container'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+    });
+
+    // 2. Handle Static Routes (Pages that don't need to fetch HTML)
+    if (['home', 'commands', 'guide'].includes(target)) {
+        document.getElementById(`${target}-container`).classList.remove('hidden');
+        
+        if (target === 'home') {
+            window.history.pushState({}, '', window.location.pathname);
+        } else {
+            window.history.pushState({}, '', '?page=' + target);
+        }
+    } 
+    // 3. Handle Dynamic Tool Routes (Fetching the overlay editors)
+    else {
+        const tC = document.getElementById('tool-container');
         tC.classList.remove('hidden');
         tC.innerHTML = '<div class="flex justify-center items-center h-64"><i class="fas fa-spinner fa-spin text-4xl text-emerald-500"></i></div>';
         window.history.pushState({}, '', '?tool=' + target);
@@ -49,7 +59,15 @@ links.forEach(l => l.addEventListener('click', (e) => loadTool(e.currentTarget.d
 
 const urlParams = new URLSearchParams(window.location.search);
 const initialTool = urlParams.get('tool');
-if (initialTool) loadTool(initialTool);
+const initialPage = urlParams.get('page');
+
+if (initialTool) {
+    loadTool(initialTool);
+} else if (initialPage && ['commands', 'guide'].includes(initialPage)) {
+    loadTool(initialPage);
+} else {
+    loadTool('home'); // Default load
+}
 
 // Tada Animation Logic for Support Buttons
 const supportBtns = document.querySelectorAll('.support-btn-anim');
@@ -76,8 +94,11 @@ document.addEventListener('keydown', (e) => {
         return;
     }
 
-    // 2. Only allow if they are actually on a tool page
-    if (activeTool === 'guide') return;
+    // 2. Only allow if they are actually on a dynamic tool page (Disable for Home, Commands, Guide)
+    if (['home', 'commands', 'guide'].includes(activeTool)) {
+        konamiIndex = 0;
+        return;
+    }
 
     // 3. Match the key
     const key = e.key;
@@ -106,7 +127,7 @@ function triggerGame(tool) {
     // Don't trigger if the wrapper is missing or a game is already running
     if (!wrap || document.getElementById('gameFrame')) return;
 
-    // Route the tools to their specific games (Using corrected relative path)
+    // Route the tools to their specific games
     let gamePath = '';
     if (tool === 'weather') gamePath = '../secret/contra.html';
     else if (tool === 'watermark') gamePath = '../secret/superc.html';
