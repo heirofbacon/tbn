@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bacon Toolkit 🥓 | Stream & Overlay Tools</title>
-    <meta name="description" content="Free, highly customizable, browser-based overlays for Twitch, YouTube, and Kick streamers. Interact with the live stream using BaconSuite.">
+    <title>Bacon Toolkit 🥓 | Free Streamer Overlays</title>
+    <meta name="description" content="Free, highly customizable, browser-based overlays for Twitch, YouTube, and Kick streamers. No accounts, no downloads. Just copy the URL into OBS.">
     <meta name="keywords" content="OBS, overlays, stream widgets, twitch tools, kick overlays, social rotator, stream weather, bouncing watermark, stream graphics">
     <meta name="author" content="The Bacon Network">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Bacon Toolkit | Stream Tools & Commands">
-    <meta property="og:description" content="Free, customizable overlays and the official command list for the live stream.">
+    <meta property="og:title" content="Bacon Toolkit | Free Streamer Overlays">
+    <meta property="og:description" content="Free, customizable, browser-based overlays for streamers. No accounts, no downloads.">
     <meta property="og:image" content="/images/preview-banner.png">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -23,15 +23,6 @@
     
     <link rel="stylesheet" href="./style.css">
     <script defer src="./app.js"></script>
-    
-    <style>
-        /* Specific page overrides to match your old layout */
-        #tool-container #dash { display: none !important; }
-        .cmd-box { background: #121214; border: 1px solid #27272a; border-radius: 0.75rem; padding: 1rem; transition: border-color 0.2s; }
-        .cmd-box:hover { border-color: #3f3f46; }
-        .cmd-code { font-family: monospace; font-size: 1.1rem; font-weight: 800; color: #10b981; margin-bottom: 0.5rem; display: block; }
-        .cmd-mod-code { color: #ef4444; }
-    </style>
 </head>
 <body class="flex flex-col h-screen overflow-hidden bg-zinc-950">
     <header class="md:hidden bg-zinc-950 border-b border-zinc-800 p-4 flex justify-between items-center shrink-0">
@@ -42,7 +33,7 @@
     <div class="flex flex-col md:flex-row flex-1 overflow-hidden relative">
         <nav id="sidebar-nav" class="bg-zinc-950 border-b md:border-b-0 md:border-r border-zinc-800 flex md:flex-col shrink-0 w-full md:w-72 overflow-x-auto md:overflow-y-auto">
             <div class="p-6 border-b border-zinc-800 shrink-0 hidden md:block">
-                <h1 class="text-2xl font-black text-white tracking-tight flex items-center gap-3"><i class="fas fa-bacon text-emerald-500"></i> Bacon Network</h1>
+                <h1 class="text-2xl font-black text-white tracking-tight flex items-center gap-3"><i class="fas fa-bacon text-emerald-500"></i> Bacon Toolkit</h1>
                 <span class="inline-block mt-2 bg-zinc-900 border border-zinc-700 px-2 py-1 rounded text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Stream & Tools Portal</span>
             </div>
             
@@ -63,7 +54,6 @@
                     <a href="https://tiktok.com/@heirofbacon" class="opacity-50 hover:opacity-100"><img src="./images/tiktok.svg" class="w-4 h-4"></a>
                     <a href="https://cash.app/$heirofbacon" class="opacity-50 hover:opacity-100"><img src="./images/cashapp.svg" class="w-4 h-4"></a>
                     <a href="https://account.venmo.com/u/heirofbacon" class="opacity-50 hover:opacity-100"><img src="./images/venmo.svg" class="w-4 h-4"></a>
-                    <a href="https://www.paypal.com/paypalme/jdeppth" class="opacity-50 hover:opacity-100"><img src="./images/paypal.svg" class="w-4 h-4"></a>
                 </div>
             </div>
             
@@ -75,7 +65,6 @@
                     <a href="https://tiktok.com/@heirofbacon" class="opacity-50 hover:opacity-100 transition-opacity"><img src="./images/tiktok.svg" class="w-5 h-5"></a>
                     <a href="https://cash.app/$heirofbacon" class="opacity-50 hover:opacity-100 transition-opacity"><img src="./images/cashapp.svg" class="w-5 h-5"></a>
                     <a href="https://account.venmo.com/u/heirofbacon" class="opacity-50 hover:opacity-100 transition-opacity"><img src="./images/venmo.svg" class="w-5 h-5"></a>
-                    <a href="https://www.paypal.com/paypalme/jdeppth" class="opacity-50 hover:opacity-100 transition-opacity"><img src="./images/paypal.svg" class="w-5 h-5"></a>
                 </div>
             </div>
         </nav>
@@ -85,6 +74,7 @@
                 
                 <div id="home-container" class="w-full p-4 md:p-8 pb-8">
                     <div class="max-w-8xl mx-auto space-y-8">
+                        
                         <div class="bg-gradient-to-br from-zinc-900 to-black border border-zinc-800 p-8 md:p-12 rounded-3xl shadow-2xl relative overflow-hidden">
                             <div class="absolute top-0 right-0 p-8 opacity-5"><i class="fas fa-bacon text-9xl"></i></div>
                             <h2 class="text-4xl md:text-5xl font-black text-white mb-6 relative z-10 tracking-tight">Welcome to the <span class="text-emerald-500">Network.</span></h2>
@@ -108,32 +98,60 @@
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="bg-zinc-900 border border-zinc-800 p-8 rounded-3xl">
+                            <div class="bg-zinc-900 border border-zinc-800 p-8 rounded-3xl relative overflow-hidden group">
+                                <div class="absolute top-4 right-4 bg-amber-500/20 border border-amber-500/50 text-amber-400 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest shadow-[0_0_10px_rgba(245,158,11,0.2)]">Coming Soon</div>
                                 <h3 class="text-2xl font-bold text-white mb-3 flex items-center gap-3"><i class="fas fa-gamepad text-blue-500"></i> Tinko Mini-Game</h3>
-                                <p class="text-zinc-400 mb-4 leading-relaxed">Tinko is an interactive physics drop game that runs directly on the stream overlay. You earn balls passively just by hanging out in chat, which you can drop to win multipliers, challenge other viewers to duels, or enter Battle Royales.</p>
+                                <p class="text-zinc-400 mb-4 leading-relaxed pr-10">Tinko is an interactive physics drop game that runs directly on the stream overlay. You earn balls passively just by hanging out in chat, which you can drop to win multipliers, challenge other viewers to duels, or enter Battle Royales.</p>
                             </div>
-                            <div class="bg-zinc-900 border border-zinc-800 p-8 rounded-3xl">
+                            <div class="bg-zinc-900 border border-zinc-800 p-8 rounded-3xl relative overflow-hidden group">
+                                <div class="absolute top-4 right-4 bg-amber-500/20 border border-amber-500/50 text-amber-400 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest shadow-[0_0_10px_rgba(245,158,11,0.2)]">Coming Soon</div>
                                 <h3 class="text-2xl font-bold text-white mb-3 flex items-center gap-3"><i class="fas fa-border-all text-violet-500"></i> The Live Grid</h3>
-                                <p class="text-zinc-400 mb-4 leading-relaxed">The stream features a dynamic, multi-cell viewing grid. Viewers can use chat commands to queue up videos, focus on specific cells, and interact with the content being shown in real-time.</p>
+                                <p class="text-zinc-400 mb-4 leading-relaxed pr-10">The stream features a dynamic, multi-cell viewing grid. Viewers can use chat commands to queue up videos, focus on specific cells, and interact with the content being shown in real-time.</p>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
-                            <div class="bg-zinc-900/50 border border-zinc-800/50 p-8 rounded-3xl text-center flex flex-col justify-between">
-                                <div>
-                                    <h3 class="text-xl font-bold text-white mb-2">Free Streamer Overlays</h3>
-                                    <p class="text-zinc-400 mb-6">I build free, browser-based overlay widgets that you can use in your own OBS setups without downloading any background software.</p>
-                                </div>
-                                <button onclick="loadTool('guide')" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold px-6 py-3 rounded-xl transition-all border border-zinc-700 mx-auto">Browse Free Overlays</button>
+                        <div class="mt-12 mb-6 border-b border-zinc-800 pb-2 flex justify-between items-end">
+                            <div>
+                                <h3 class="text-2xl font-bold text-white flex items-center gap-3"><i class="fas fa-shapes text-emerald-500"></i> Free Overlay Tools</h3>
+                                <p class="text-zinc-400 mt-1">Browser-based widgets for OBS. No downloads required.</p>
                             </div>
-                            <div class="bg-zinc-900/50 border border-zinc-800/50 p-8 rounded-3xl text-center flex flex-col justify-between">
-                                <div>
-                                    <h3 class="text-xl font-bold text-emerald-400 mb-2">Custom Commissions</h3>
-                                    <p class="text-zinc-400 mb-6">Need something bespoke? I take commissions for custom stream tools, specialized OBS overlays, and interactive chat games designed exactly to your brand.</p>
+                            <button onclick="loadTool('guide')" class="hidden md:flex text-sm text-zinc-400 hover:text-white items-center gap-2 transition-colors">Read Documentation <i class="fas fa-arrow-right"></i></button>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="bg-zinc-900/80 border border-zinc-800 hover:border-violet-500/50 p-6 rounded-3xl transition-all cursor-pointer group hover:-translate-y-1 hover:shadow-xl" onclick="loadTool('watermark')">
+                                <div class="bg-violet-500/10 w-14 h-14 rounded-2xl flex items-center justify-center mb-5 border border-violet-500/20 group-hover:scale-110 transition-transform">
+                                    <i class="fas fa-compact-disc text-2xl text-violet-500"></i>
                                 </div>
-                                <a href="https://linktr.ee/theheirofbacon" target="_blank" class="inline-block bg-zinc-800 hover:bg-zinc-700 text-white font-bold px-6 py-3 rounded-xl transition-all border border-zinc-700 mx-auto">Contact for Details</a>
+                                <h4 class="text-lg font-bold text-white mb-2">Bouncing Watermark</h4>
+                                <p class="text-sm text-zinc-400">A retro DVD-style bouncing logo or text overlay for your stream.</p>
+                            </div>
+                            
+                            <div class="bg-zinc-900/80 border border-zinc-800 hover:border-blue-500/50 p-6 rounded-3xl transition-all cursor-pointer group hover:-translate-y-1 hover:shadow-xl" onclick="loadTool('socials')">
+                                <div class="bg-blue-500/10 w-14 h-14 rounded-2xl flex items-center justify-center mb-5 border border-blue-500/20 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-share-nodes text-2xl text-blue-500"></i>
+                                </div>
+                                <h4 class="text-lg font-bold text-white mb-2">Socials Rotator</h4>
+                                <p class="text-sm text-zinc-400">Sleek, animated rotating social media handles and icons.</p>
+                            </div>
+                            
+                            <div class="bg-zinc-900/80 border border-zinc-800 hover:border-sky-500/50 p-6 rounded-3xl transition-all cursor-pointer group hover:-translate-y-1 hover:shadow-xl" onclick="loadTool('weather')">
+                                <div class="bg-sky-500/10 w-14 h-14 rounded-2xl flex items-center justify-center mb-5 border border-sky-500/20 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-cloud-sun-rain text-2xl text-sky-500"></i>
+                                </div>
+                                <h4 class="text-lg font-bold text-white mb-2">Live Weather</h4>
+                                <p class="text-sm text-zinc-400">Real-time local weather updates and a stream clock widget.</p>
                             </div>
                         </div>
+
+                        <div class="bg-zinc-900/50 border border-zinc-800/50 p-8 md:p-10 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-6 mt-12">
+                            <div>
+                                <h3 class="text-2xl font-bold text-emerald-400 mb-2">Custom Commissions Open</h3>
+                                <p class="text-zinc-400 max-w-2xl">Need something bespoke? I take commissions for custom stream tools, specialized OBS overlays, and interactive chat games designed exactly to your brand.</p>
+                            </div>
+                            <a href="https://linktr.ee/theheirofbacon" target="_blank" class="shrink-0 bg-zinc-800 hover:bg-zinc-700 text-white font-bold px-8 py-4 rounded-xl transition-all border border-zinc-700 whitespace-nowrap">Contact for Details</a>
+                        </div>
+
                     </div>
                 </div>
 
@@ -271,6 +289,16 @@
                                         <li>Paste the URL, set the Width/Height to match your canvas (e.g., 1920x1080), and press OK.</li>
                                     </ol>
                                 </section>
+
+                                <section class="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl">
+                                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-3"><i class="fas fa-rocket text-emerald-500"></i> Launch a Tool</h3>
+                                    <div class="flex flex-wrap gap-3">
+                                        <button onclick="loadTool('watermark')" class="bg-zinc-800 hover:bg-violet-900/50 hover:text-violet-400 border border-zinc-700 hover:border-violet-500/50 px-4 py-2 rounded-xl text-sm font-bold transition-colors flex items-center gap-2"><i class="fas fa-compact-disc"></i> Bouncing Watermark</button>
+                                        <button onclick="loadTool('socials')" class="bg-zinc-800 hover:bg-blue-900/50 hover:text-blue-400 border border-zinc-700 hover:border-blue-500/50 px-4 py-2 rounded-xl text-sm font-bold transition-colors flex items-center gap-2"><i class="fa-solid fa-share-nodes"></i> Socials Rotator</button>
+                                        <button onclick="loadTool('weather')" class="bg-zinc-800 hover:bg-sky-900/50 hover:text-sky-400 border border-zinc-700 hover:border-sky-500/50 px-4 py-2 rounded-xl text-sm font-bold transition-colors flex items-center gap-2"><i class="fa-solid fa-cloud-sun-rain"></i> Live Weather</button>
+                                    </div>
+                                </section>
+
                                 <section>
                                     <h3 class="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-3 border-b border-zinc-800 pb-2"><i class="fas fa-font text-blue-400"></i> Custom Google Fonts</h3>
                                     <p class="text-zinc-400 leading-relaxed">Every tool in this kit supports dynamic <a href="https://fonts.google.com/" target="_blank" class="text-emerald-400 hover:underline">Google Fonts</a>. Instead of picking from a limited dropdown, you can type the exact name of any font available on Google's library into the "Font Family" box (e.g., <code>Bebas Neue</code>, <code>Roboto</code>, <code>Anton</code>, <code>Creepster</code>). The overlay will automatically download and apply the font in real-time.</p>
