@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bacon Toolkit 🥓 | Free Streamer Overlays</title>
-    <meta name="description" content="Free, highly customizable, browser-based overlays for Twitch, YouTube, and Kick streamers. No accounts, no downloads. Just copy the URL into OBS.">
+    <title>Bacon Toolkit 🥓 | Stream & Overlay Tools</title>
+    <meta name="description" content="Free, highly customizable, browser-based overlays for Twitch, YouTube, and Kick streamers. Interact with the live stream using BaconSuite.">
     <meta name="keywords" content="OBS, overlays, stream widgets, twitch tools, kick overlays, social rotator, stream weather, bouncing watermark, stream graphics">
     <meta name="author" content="The Bacon Network">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Bacon Toolkit | Free Streamer Overlays">
-    <meta property="og:description" content="Free, customizable, browser-based overlays for streamers. No accounts, no downloads.">
+    <meta property="og:title" content="Bacon Toolkit | Stream Tools & Commands">
+    <meta property="og:description" content="Free, customizable overlays and the official command list for the live stream.">
     <meta property="og:image" content="/images/preview-banner.png">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -23,6 +23,15 @@
     
     <link rel="stylesheet" href="./style.css">
     <script defer src="./app.js"></script>
+    
+    <style>
+        /* Specific page overrides to match your old layout */
+        #tool-container #dash { display: none !important; }
+        .cmd-box { background: #121214; border: 1px solid #27272a; border-radius: 0.75rem; padding: 1rem; transition: border-color 0.2s; }
+        .cmd-box:hover { border-color: #3f3f46; }
+        .cmd-code { font-family: monospace; font-size: 1.1rem; font-weight: 800; color: #10b981; margin-bottom: 0.5rem; display: block; }
+        .cmd-mod-code { color: #ef4444; }
+    </style>
 </head>
 <body class="flex flex-col h-screen overflow-hidden bg-zinc-950">
     <header class="md:hidden bg-zinc-950 border-b border-zinc-800 p-4 flex justify-between items-center shrink-0">
@@ -33,7 +42,7 @@
     <div class="flex flex-col md:flex-row flex-1 overflow-hidden relative">
         <nav id="sidebar-nav" class="bg-zinc-950 border-b md:border-b-0 md:border-r border-zinc-800 flex md:flex-col shrink-0 w-full md:w-72 overflow-x-auto md:overflow-y-auto">
             <div class="p-6 border-b border-zinc-800 shrink-0 hidden md:block">
-                <h1 class="text-2xl font-black text-white tracking-tight flex items-center gap-3"><i class="fas fa-bacon text-emerald-500"></i> Bacon Toolkit</h1>
+                <h1 class="text-2xl font-black text-white tracking-tight flex items-center gap-3"><i class="fas fa-bacon text-emerald-500"></i> Bacon Network</h1>
                 <span class="inline-block mt-2 bg-zinc-900 border border-zinc-700 px-2 py-1 rounded text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Stream & Tools Portal</span>
             </div>
             
@@ -54,6 +63,7 @@
                     <a href="https://tiktok.com/@heirofbacon" class="opacity-50 hover:opacity-100"><img src="./images/tiktok.svg" class="w-4 h-4"></a>
                     <a href="https://cash.app/$heirofbacon" class="opacity-50 hover:opacity-100"><img src="./images/cashapp.svg" class="w-4 h-4"></a>
                     <a href="https://account.venmo.com/u/heirofbacon" class="opacity-50 hover:opacity-100"><img src="./images/venmo.svg" class="w-4 h-4"></a>
+                    <a href="https://www.paypal.com/paypalme/jdeppth" class="opacity-50 hover:opacity-100"><img src="./images/paypal.svg" class="w-4 h-4"></a>
                 </div>
             </div>
             
@@ -65,6 +75,7 @@
                     <a href="https://tiktok.com/@heirofbacon" class="opacity-50 hover:opacity-100 transition-opacity"><img src="./images/tiktok.svg" class="w-5 h-5"></a>
                     <a href="https://cash.app/$heirofbacon" class="opacity-50 hover:opacity-100 transition-opacity"><img src="./images/cashapp.svg" class="w-5 h-5"></a>
                     <a href="https://account.venmo.com/u/heirofbacon" class="opacity-50 hover:opacity-100 transition-opacity"><img src="./images/venmo.svg" class="w-5 h-5"></a>
+                    <a href="https://www.paypal.com/paypalme/jdeppth" class="opacity-50 hover:opacity-100 transition-opacity"><img src="./images/paypal.svg" class="w-5 h-5"></a>
                 </div>
             </div>
         </nav>
@@ -77,6 +88,7 @@
                         
                         <div class="bg-gradient-to-br from-zinc-900 to-black border border-zinc-800 p-8 md:p-12 rounded-3xl shadow-2xl relative overflow-hidden">
                             <div class="absolute top-0 right-0 p-8 opacity-5"><i class="fas fa-bacon text-9xl"></i></div>
+
                             <h2 class="text-4xl md:text-5xl font-black text-white mb-6 relative z-10 tracking-tight">Welcome to the <span class="text-emerald-500">Network.</span></h2>
                             <p class="text-lg md:text-xl text-zinc-400 relative z-10 max-w-2xl leading-relaxed mb-8">
                                 If you are watching the live stream right now, you are interacting with <strong>BaconSuite</strong>—a custom-built, modular broadcasting engine designed to make chat fully interactive.
@@ -92,7 +104,7 @@
                                     <i class="fab fa-twitch text-purple-500"></i> Twitch
                                 </a>
                                 <a href="https://kick.com/heirofbacon" target="_blank" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold px-6 py-3 rounded-xl transition-all border border-zinc-700 flex items-center gap-2">
-                                    <i class="fa-kick text-green-500"></i> Kick
+                                    <img src="./images/kick.svg" class="w-4 h-4"> Kick
                                 </a>
                             </div>
                         </div>
@@ -184,16 +196,16 @@
                                     <span class="cmd-code">!leaderboard [@user]</span>
                                     <p class="text-sm text-zinc-400">Shows the top 3 players on the server, as well as your current rank.</p>
                                 </div>
-                                <div class="cmd-box border-l-2 border-l-blue-500">
+                                <div class="cmd-box bg-blue-900/20 border-blue-800/50">
                                     <span class="cmd-code text-blue-400">!duel &lt;@user&gt; &lt;wager&gt;</span>
                                     <p class="text-sm text-zinc-400">Challenge another viewer to a 1v1 drop battle. Winner takes the whole pot!</p>
-                                    <div class="bg-black/50 p-2 rounded text-xs font-mono text-zinc-500 mt-2">Ex: !duel @scubasteve 50</div>
+                                    <div class="bg-black/50 p-2 rounded text-xs font-mono text-zinc-500 mt-2 border border-blue-900/50">Ex: !duel @scubasteve 50</div>
                                 </div>
-                                <div class="cmd-box border-l-2 border-l-blue-500">
+                                <div class="cmd-box bg-blue-900/20 border-blue-800/50">
                                     <span class="cmd-code text-blue-400">!accept <span class="text-zinc-600 text-sm font-normal">or</span> !deny</span>
                                     <p class="text-sm text-zinc-400">Accept or decline a pending duel challenge from another viewer.</p>
                                 </div>
-                                <div class="cmd-box border-l-2 border-l-amber-500">
+                                <div class="cmd-box bg-amber-900/20 border-amber-800/50">
                                     <span class="cmd-code text-amber-400">!join</span>
                                     <p class="text-sm text-zinc-400">Join an active Battle Royale lobby if a Moderator has opened one.</p>
                                 </div>
@@ -260,7 +272,7 @@
                                 <div class="cmd-box border-red-900/30">
                                     <span class="cmd-code cmd-mod-code">!swap &lt;cell_1&gt; &lt;cell_2&gt;</span>
                                     <p class="text-sm text-zinc-400">Swaps the positions of two active feeds on the grid.</p>
-                                    <div class="bg-black/50 p-2 rounded text-xs font-mono text-zinc-500 mt-2">Ex: !swap 1 4</div>
+                                    <div class="bg-black/50 p-2 rounded text-xs font-mono text-zinc-500 mt-2 border border-red-900/30">Ex: !swap 1 4</div>
                                 </div>
                             </div>
                         </div>
