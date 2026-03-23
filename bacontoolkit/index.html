@@ -1,22 +1,317 @@
-<!DOCTYPE html><html lang="en" class="bg-zinc-950 text-zinc-300"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Bacon Toolkit 🥓 | Free Streamer Overlays</title>
-<meta name="description" content="Free, highly customizable, browser-based overlays for Twitch, YouTube, and Kick streamers. No accounts, no downloads. Just copy the URL into OBS.">
-<meta name="keywords" content="OBS, overlays, stream widgets, twitch tools, kick overlays, social rotator, stream weather, bouncing watermark, stream graphics">
-<meta name="author" content="The Bacon Network"><meta property="og:type" content="website"><meta property="og:title" content="Bacon Toolkit | Free Streamer Overlays"><meta property="og:description" content="Free, customizable, browser-based overlays for streamers. No accounts, no downloads."><meta property="og:image" content="/images/preview-banner.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
-<script defer src="https://cloud.umami.is/script.js" data-website-id="ef3ec6fc-39f3-40af-acd9-ed83f6d6e864"></script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4775818915083385" crossorigin="anonymous"></script>
-<script src="https://cdn.tailwindcss.com"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<link rel="stylesheet" href="./style.css">
-<script defer src="./app.js"></script>
+<!DOCTYPE html>
+<html lang="en" class="bg-zinc-950 text-zinc-300">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bacon Toolkit 🥓 | Stream & Overlay Tools</title>
+    <meta name="description" content="Free, highly customizable, browser-based overlays for Twitch, YouTube, and Kick streamers. Interact with the live stream using BaconSuite.">
+    <meta name="keywords" content="OBS, overlays, stream widgets, twitch tools, kick overlays, social rotator, stream weather, bouncing watermark, stream graphics">
+    <meta name="author" content="The Bacon Network">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Bacon Toolkit | Stream Tools & Commands">
+    <meta property="og:description" content="Free, customizable overlays and the official command list for the live stream.">
+    <meta property="og:image" content="/images/preview-banner.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+    
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="ef3ec6fc-39f3-40af-acd9-ed83f6d6e864"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4775818915083385" crossorigin="anonymous"></script>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <link rel="stylesheet" href="./style.css">
+    <script defer src="./app.js"></script>
+    
+    <style>
+        /* Specific page overrides to match your old layout */
+        #tool-container #dash { display: none !important; }
+        .cmd-box { background: #121214; border: 1px solid #27272a; border-radius: 0.75rem; padding: 1rem; transition: border-color 0.2s; }
+        .cmd-box:hover { border-color: #3f3f46; }
+        .cmd-code { font-family: monospace; font-size: 1.1rem; font-weight: 800; color: #10b981; margin-bottom: 0.5rem; display: block; }
+        .cmd-mod-code { color: #ef4444; }
+    </style>
 </head>
 <body class="flex flex-col h-screen overflow-hidden bg-zinc-950">
-  <header class="md:hidden bg-zinc-950 border-b border-zinc-800 p-4 flex justify-between items-center shrink-0"><h1 class="text-xl font-black text-white flex items-center gap-2"><i class="fas fa-bacon text-emerald-500"></i> Bacon Toolkit</h1><a href="https://linktr.ee/theheirofbacon" target="_blank" class="support-btn-anim text-red-500 text-xl inline-block"><i class="fas fa-heart"></i></a></header>
-  <div class="flex flex-col md:flex-row flex-1 overflow-hidden relative">
-    <nav id="sidebar-nav" class="bg-zinc-950 border-b md:border-b-0 md:border-r border-zinc-800 flex md:flex-col shrink-0 w-full md:w-72 overflow-x-auto md:overflow-y-auto">
-      <div class="p-6 border-b border-zinc-800 shrink-0 hidden md:block"><h1 class="text-2xl font-black text-white tracking-tight flex items-center gap-3"><i class="fas fa-bacon text-emerald-500"></i> Bacon Toolkit</h1><span class="inline-block mt-2 bg-zinc-900 border border-zinc-700 px-2 py-1 rounded text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Free Streamer Overlays</span></div>
-      <div class="flex md:flex-col p-2 md:p-4 gap-2 md:gap-1 flex-1 items-center md:items-stretch"><p class="hidden md:block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2 pl-2">Menu</p><a class="nav-link active" data-target="guide"><i class="fas fa-book-open w-5 text-center"></i> Documentation</a><p class="hidden md:block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-6 mb-2 pl-2">Available Tools</p><a class="nav-link" data-target="watermark"><i class="fas fa-compact-disc w-5 text-center text-violet-500"></i> Bouncing Watermark</a><a class="nav-link" data-target="socials"><i class="fa-solid fa-share-nodes w-5 text-center text-blue-500"></i> Socials Rotator</a><a class="nav-link" data-target="weather"><i class="fa-solid fa-cloud-sun-rain w-5 text-center text-sky-500"></i> Live Weather</a><div class="md:hidden flex items-center gap-3 pl-4 pr-2 border-l border-zinc-800 ml-2 h-6"><a href="https://x.com/theheirofbacon" class="opacity-50 hover:opacity-100"><img src="./images/twitter.svg" class="w-4 h-4"></a><a href="https://youtube.com/@heirofbacon" class="opacity-50 hover:opacity-100"><img src="./images/youtube.svg" class="w-4 h-4"></a><a href="https://tiktok.com/@heirofbacon" class="opacity-50 hover:opacity-100"><img src="./images/tiktok.svg" class="w-4 h-4"></a><a href="https://cash.app/$heirofbacon" class="opacity-50 hover:opacity-100"><img src="./images/cashapp.svg" class="w-4 h-4"></a><a href="https://account.venmo.com/u/heirofbacon" class="opacity-50 hover:opacity-100"><img src="./images/venmo.svg" class="w-4 h-4"></a></div></div>
-      <div class="p-4 border-t border-zinc-800 shrink-0 hidden md:block"><a href="https://linktr.ee/theheirofbacon" target="_blank" class="support-btn-anim w-full flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 px-4 py-3 rounded-xl text-emerald-500 font-bold text-sm transition-colors shadow-lg"><i class="fas fa-heart text-red-500"></i> Support the Creator</a><div class="mt-5 flex justify-center gap-5 items-center"><a href="https://x.com/theheirofbacon" class="opacity-50 hover:opacity-100 transition-opacity"><img src="./images/twitter.svg" class="w-5 h-5"></a><a href="https://youtube.com/@heirofbacon" class="opacity-50 hover:opacity-100 transition-opacity"><img src="./images/youtube.svg" class="w-5 h-5"></a><a href="https://tiktok.com/@heirofbacon" class="opacity-50 hover:opacity-100 transition-opacity"><img src="./images/tiktok.svg" class="w-5 h-5"></a><a href="https://cash.app/$heirofbacon" class="opacity-50 hover:opacity-100 transition-opacity"><img src="./images/cashapp.svg" class="w-5 h-5"></a><a href="https://account.venmo.com/u/heirofbacon" class="opacity-50 hover:opacity-100 transition-opacity"><img src="./images/venmo.svg" class="w-5 h-5"></a></div></div>
-    </nav>
-    <main class="flex-1 overflow-y-auto bg-black/40 relative" id="main-scroll-area"><div class="flex flex-col min-h-full"><div id="guide-container" class="w-full p-4 md:p-8 pb-8"><div class="flex flex-col xl:flex-row gap-8 mx-0 md:mx-5"><div class="flex-1 max-w-4xl"><div class="bg-gradient-to-br from-zinc-900 to-black border border-zinc-800 p-6 md:p-8 rounded-3xl mb-10 shadow-2xl relative overflow-hidden"><div class="absolute top-0 right-0 p-8 opacity-5"><i class="fas fa-shapes text-9xl"></i></div><h2 class="text-3xl md:text-4xl font-bold text-white mb-4 relative z-10">Welcome to the Toolkit</h2><p class="text-base md:text-lg text-zinc-400 relative z-10 max-w-2xl leading-relaxed">A collection of highly customizable, browser-based overlays for your live streams. Completely free, no accounts, no installations, and no server required.</p></div>
-    <div class="space-y-12"><section><h3 class="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-3 border-b border-zinc-800 pb-2"><i class="fas fa-magic text-emerald-500"></i> How It Works</h3><p class="text-zinc-400 leading-relaxed mb-4">Unlike traditional overlays that require background software, these tools generate a customized <strong>URL string</strong>. All of your settings, colors, and text are saved directly inside that link.</p><ol class="list-decimal pl-5 text-zinc-300 space-y-2 font-medium"><li>Select a tool from the sidebar.</li><li>Tweak the settings, fonts, and colors to match your brand.</li><li>Click the <strong>COPY</strong> button below the live preview.</li><li>In OBS (or your streaming software), add a new <strong>Browser Source</strong>.</li><li>Paste the URL, set the Width/Height to match your canvas (e.g., 1920x1080), and press OK.</li></ol></section><section><h3 class="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-3 border-b border-zinc-800 pb-2"><i class="fas fa-font text-blue-400"></i> Custom Google Fonts</h3><p class="text-zinc-400 leading-relaxed">Every tool in this kit supports dynamic <a href="https://fonts.google.com/" target="_blank" class="text-emerald-400 hover:underline">Google Fonts</a>. Instead of picking from a limited dropdown, you can type the exact name of any font available on Google's library into the "Font Family" box (e.g., <code>Bebas Neue</code>, <code>Roboto</code>, <code>Anton</code>, <code>Creepster</code>). The overlay will automatically download and apply the font in real-time.</p></section><section><h3 class="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-3 border-b border-zinc-800 pb-2"><i class="fas fa-pen-to-square text-violet-400"></i> Making Future Edits</h3><div class="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl"><p class="text-zinc-300 leading-relaxed">Because your settings are saved in the URL, if you want to make a change later (like updating a social handle or changing a color), you don't need to recreate the overlay from scratch.<br><br><strong class="text-emerald-400">Load Existing Settings:</strong> Simply paste your old generated URL back into the URL box at the bottom of any tool. The editor will instantly reverse-engineer the link and restore all of your colors, fonts, and settings so you can continue exactly where you left off!</p></div></section></div></div><div class="hidden xl:flex flex-col w-[400px] shrink-0 space-y-8 pt-2"><div class="space-y-2"><span class="text-xs font-bold text-zinc-500 uppercase tracking-wider ml-2"><i class="fas fa-desktop mr-1"></i> OBS Source Setup</span><div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-1.5 shadow-xl"><img src="./images/guide-obs-setup.png" class="w-full rounded-xl border border-zinc-800 object-cover" alt="OBS Setup" onerror="this.style.display='none'"></div></div><div class="space-y-2"><span class="text-xs font-bold text-zinc-500 uppercase tracking-wider ml-2"><i class="fas fa-eye mr-1"></i> Overlay Preview</span><div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-1.5 shadow-xl"><img src="./images/guide-tools-demo.png" class="w-full rounded-xl border border-zinc-800 object-cover" alt="Overlay Preview" onerror="this.style.display='none'"></div></div></div></div></div>
-    <div id="tool-container" class="hidden w-full pb-8 flex-1"></div>
-    <div class="w-full p-4 md:p-8 mt-auto shrink-0"><div class="max-w-6xl mx-auto bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden min-h-[90px] flex flex-col items-center justify-center text-zinc-600 text-[10px] uppercase font-bold tracking-wider relative shadow-lg"><span class="absolute opacity-30 pointer-events-none">Advertisement</span><ins class="adsbygoogle relative z-10" style="display:block; width:100%" data-ad-client="ca-pub-4775818915083385" data-ad-slot="1765415601" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div></div></div></main></div>
-</body></html>
+    <header class="md:hidden bg-zinc-950 border-b border-zinc-800 p-4 flex justify-between items-center shrink-0">
+        <h1 class="text-xl font-black text-white flex items-center gap-2"><i class="fas fa-bacon text-emerald-500"></i> Bacon Toolkit</h1>
+        <a href="https://linktr.ee/theheirofbacon" target="_blank" class="support-btn-anim text-red-500 text-xl inline-block"><i class="fas fa-heart"></i></a>
+    </header>
+
+    <div class="flex flex-col md:flex-row flex-1 overflow-hidden relative">
+        <nav id="sidebar-nav" class="bg-zinc-950 border-b md:border-b-0 md:border-r border-zinc-800 flex md:flex-col shrink-0 w-full md:w-72 overflow-x-auto md:overflow-y-auto">
+            <div class="p-6 border-b border-zinc-800 shrink-0 hidden md:block">
+                <h1 class="text-2xl font-black text-white tracking-tight flex items-center gap-3"><i class="fas fa-bacon text-emerald-500"></i> Bacon Network</h1>
+                <span class="inline-block mt-2 bg-zinc-900 border border-zinc-700 px-2 py-1 rounded text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Stream & Tools Portal</span>
+            </div>
+            
+            <div class="flex md:flex-col p-2 md:p-4 gap-2 md:gap-1 flex-1 items-center md:items-stretch">
+                <p class="hidden md:block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2 pl-2">Stream Portal</p>
+                <a class="nav-link active" data-target="home"><i class="fas fa-house w-5 text-center text-zinc-300"></i> Home</a>
+                <a class="nav-link" data-target="commands"><i class="fas fa-terminal w-5 text-center text-emerald-500"></i> Chat Commands</a>
+                
+                <p class="hidden md:block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-6 mb-2 pl-2">Free Overlays</p>
+                <a class="nav-link" data-target="guide"><i class="fas fa-book-open w-5 text-center"></i> Documentation</a>
+                <a class="nav-link" data-target="watermark"><i class="fas fa-compact-disc w-5 text-center text-violet-500"></i> Bouncing Watermark</a>
+                <a class="nav-link" data-target="socials"><i class="fa-solid fa-share-nodes w-5 text-center text-blue-500"></i> Socials Rotator</a>
+                <a class="nav-link" data-target="weather"><i class="fa-solid fa-cloud-sun-rain w-5 text-center text-sky-500"></i> Live Weather</a>
+                
+                <div class="md:hidden flex items-center gap-3 pl-4 pr-2 border-l border-zinc-800 ml-2 h-6">
+                    <a href="https://x.com/theheirofbacon" class="opacity-50 hover:opacity-100"><img src="./images/twitter.svg" class="w-4 h-4"></a>
+                    <a href="https://youtube.com/@heirofbacon" class="opacity-50 hover:opacity-100"><img src="./images/youtube.svg" class="w-4 h-4"></a>
+                    <a href="https://tiktok.com/@heirofbacon" class="opacity-50 hover:opacity-100"><img src="./images/tiktok.svg" class="w-4 h-4"></a>
+                    <a href="https://cash.app/$heirofbacon" class="opacity-50 hover:opacity-100"><img src="./images/cashapp.svg" class="w-4 h-4"></a>
+                    <a href="https://account.venmo.com/u/heirofbacon" class="opacity-50 hover:opacity-100"><img src="./images/venmo.svg" class="w-4 h-4"></a>
+                    <a href="https://www.paypal.com/paypalme/jdeppth" class="opacity-50 hover:opacity-100"><img src="./images/paypal.svg" class="w-4 h-4"></a>
+                </div>
+            </div>
+            
+            <div class="p-4 border-t border-zinc-800 shrink-0 hidden md:block">
+                <a href="https://linktr.ee/theheirofbacon" target="_blank" class="support-btn-anim w-full flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 px-4 py-3 rounded-xl text-emerald-500 font-bold text-sm transition-colors shadow-lg"><i class="fas fa-heart text-red-500"></i> Support the Creator</a>
+                <div class="mt-5 flex justify-center gap-5 items-center">
+                    <a href="https://x.com/theheirofbacon" class="opacity-50 hover:opacity-100 transition-opacity"><img src="./images/twitter.svg" class="w-5 h-5"></a>
+                    <a href="https://youtube.com/@heirofbacon" class="opacity-50 hover:opacity-100 transition-opacity"><img src="./images/youtube.svg" class="w-5 h-5"></a>
+                    <a href="https://tiktok.com/@heirofbacon" class="opacity-50 hover:opacity-100 transition-opacity"><img src="./images/tiktok.svg" class="w-5 h-5"></a>
+                    <a href="https://cash.app/$heirofbacon" class="opacity-50 hover:opacity-100 transition-opacity"><img src="./images/cashapp.svg" class="w-5 h-5"></a>
+                    <a href="https://account.venmo.com/u/heirofbacon" class="opacity-50 hover:opacity-100 transition-opacity"><img src="./images/venmo.svg" class="w-5 h-5"></a>
+                    <a href="https://www.paypal.com/paypalme/jdeppth" class="opacity-50 hover:opacity-100 transition-opacity"><img src="./images/paypal.svg" class="w-5 h-5"></a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="flex-1 overflow-y-auto bg-black/40 relative" id="main-scroll-area">
+            <div class="flex flex-col min-h-full">
+                
+                <div id="home-container" class="w-full p-4 md:p-8 pb-8">
+                    <div class="max-w-8xl mx-auto space-y-8">
+                        <div class="bg-gradient-to-br from-zinc-900 to-black border border-zinc-800 p-8 md:p-12 rounded-3xl shadow-2xl relative overflow-hidden">
+                            <div class="absolute top-0 right-0 p-8 opacity-5"><i class="fas fa-bacon text-9xl"></i></div>
+                            <h2 class="text-4xl md:text-5xl font-black text-white mb-6 relative z-10 tracking-tight">Welcome to the <span class="text-emerald-500">Network.</span></h2>
+                            <p class="text-lg md:text-xl text-zinc-400 relative z-10 max-w-2xl leading-relaxed mb-8">
+                                If you are watching the live stream right now, you are interacting with <strong>BaconSuite</strong>—a custom-built, modular broadcasting engine designed to make chat fully interactive.
+                            </p>
+                            <div class="flex flex-wrap gap-4 relative z-10">
+                                <button onclick="loadTool('commands')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-3 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all border border-emerald-500/50 flex items-center gap-2">
+                                    <i class="fas fa-terminal"></i> View Stream Commands
+                                </button>
+                                <a href="https://youtube.com/@heirofbacon" target="_blank" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold px-6 py-3 rounded-xl transition-all border border-zinc-700 flex items-center gap-2">
+                                    <i class="fab fa-youtube text-red-500"></i> YouTube
+                                </a>
+                                <a href="https://twitch.tv/heirofbacon" target="_blank" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold px-6 py-3 rounded-xl transition-all border border-zinc-700 flex items-center gap-2">
+                                    <i class="fab fa-twitch text-purple-500"></i> Twitch
+                                </a>
+                                <a href="https://kick.com/heirofbacon" target="_blank" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold px-6 py-3 rounded-xl transition-all border border-zinc-700 flex items-center gap-2">
+                                    <i class="fa-kick text-green-500"></i> Kick
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-zinc-900 border border-zinc-800 p-8 rounded-3xl">
+                                <h3 class="text-2xl font-bold text-white mb-3 flex items-center gap-3"><i class="fas fa-gamepad text-blue-500"></i> Tinko Mini-Game</h3>
+                                <p class="text-zinc-400 mb-4 leading-relaxed">Tinko is an interactive physics drop game that runs directly on the stream overlay. You earn balls passively just by hanging out in chat, which you can drop to win multipliers, challenge other viewers to duels, or enter Battle Royales.</p>
+                            </div>
+                            <div class="bg-zinc-900 border border-zinc-800 p-8 rounded-3xl">
+                                <h3 class="text-2xl font-bold text-white mb-3 flex items-center gap-3"><i class="fas fa-border-all text-violet-500"></i> The Live Grid</h3>
+                                <p class="text-zinc-400 mb-4 leading-relaxed">The stream features a dynamic, multi-cell viewing grid. Viewers can use chat commands to queue up videos, focus on specific cells, and interact with the content being shown in real-time.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
+                            <div class="bg-zinc-900/50 border border-zinc-800/50 p-8 rounded-3xl text-center flex flex-col justify-between">
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-2">Free Streamer Overlays</h3>
+                                    <p class="text-zinc-400 mb-6">I build free, browser-based overlay widgets that you can use in your own OBS setups without downloading any background software.</p>
+                                </div>
+                                <button onclick="loadTool('guide')" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold px-6 py-3 rounded-xl transition-all border border-zinc-700 mx-auto">Browse Free Overlays</button>
+                            </div>
+                            <div class="bg-zinc-900/50 border border-zinc-800/50 p-8 rounded-3xl text-center flex flex-col justify-between">
+                                <div>
+                                    <h3 class="text-xl font-bold text-emerald-400 mb-2">Custom Commissions</h3>
+                                    <p class="text-zinc-400 mb-6">Need something bespoke? I take commissions for custom stream tools, specialized OBS overlays, and interactive chat games designed exactly to your brand.</p>
+                                </div>
+                                <a href="https://linktr.ee/theheirofbacon" target="_blank" class="inline-block bg-zinc-800 hover:bg-zinc-700 text-white font-bold px-6 py-3 rounded-xl transition-all border border-zinc-700 mx-auto">Contact for Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="commands-container" class="hidden w-full p-4 md:p-8 pb-8">
+                    <div class="max-w-8xl mx-auto">
+                        <div class="mb-10 border-b border-zinc-800 pb-6">
+                            <h2 class="text-4xl font-black text-white tracking-tight">Stream <span class="text-emerald-500">Commands</span></h2>
+                            <p class="text-zinc-400 mt-2 text-lg">Everything you need to interact with the Tinko game and the Live Grid.</p>
+                        </div>
+
+                        <div class="mb-16">
+                            <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><i class="fas fa-gamepad text-blue-500"></i> Tinko Commands (Viewers)</h3>
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <div class="cmd-box">
+                                    <span class="cmd-code">!drop &lt;amount&gt; [color|me|@user]</span>
+                                    <p class="text-sm text-zinc-400 mb-2">Drop balls onto the pegboard. You can optionally specify a color, "me" to drop your profile picture, or "@username" to drop someone else's avatar.</p>
+                                    <div class="bg-black/50 p-2 rounded text-xs font-mono text-zinc-500">Ex: !drop 3 cyan<br>Ex: !drop 5 me</div>
+                                </div>
+                                <div class="cmd-box">
+                                    <span class="cmd-code">!balls <span class="text-zinc-600 text-sm font-normal">or</span> !points [@user]</span>
+                                    <p class="text-sm text-zinc-400 mb-2">Check your current ball inventory. Tag someone else to check their balance.</p>
+                                    <div class="bg-black/50 p-2 rounded text-xs font-mono text-zinc-500">Ex: !balls<br>Ex: !balls @heirofbacon</div>
+                                </div>
+                                <div class="cmd-box">
+                                    <span class="cmd-code">!color &lt;hex|random|me|url&gt;</span>
+                                    <p class="text-sm text-zinc-400 mb-2">Permanently change what your balls look like. Use "me" to always drop your profile pic.</p>
+                                    <div class="bg-black/50 p-2 rounded text-xs font-mono text-zinc-500">Ex: !color me<br>Ex: !color #ff00ff</div>
+                                </div>
+                                <div class="cmd-box">
+                                    <span class="cmd-code">!leaderboard [@user]</span>
+                                    <p class="text-sm text-zinc-400">Shows the top 3 players on the server, as well as your current rank.</p>
+                                </div>
+                                <div class="cmd-box border-l-2 border-l-blue-500">
+                                    <span class="cmd-code text-blue-400">!duel &lt;@user&gt; &lt;wager&gt;</span>
+                                    <p class="text-sm text-zinc-400">Challenge another viewer to a 1v1 drop battle. Winner takes the whole pot!</p>
+                                    <div class="bg-black/50 p-2 rounded text-xs font-mono text-zinc-500 mt-2">Ex: !duel @scubasteve 50</div>
+                                </div>
+                                <div class="cmd-box border-l-2 border-l-blue-500">
+                                    <span class="cmd-code text-blue-400">!accept <span class="text-zinc-600 text-sm font-normal">or</span> !deny</span>
+                                    <p class="text-sm text-zinc-400">Accept or decline a pending duel challenge from another viewer.</p>
+                                </div>
+                                <div class="cmd-box border-l-2 border-l-amber-500">
+                                    <span class="cmd-code text-amber-400">!join</span>
+                                    <p class="text-sm text-zinc-400">Join an active Battle Royale lobby if a Moderator has opened one.</p>
+                                </div>
+                                <div class="cmd-box">
+                                    <span class="cmd-code">!tinko</span>
+                                    <p class="text-sm text-zinc-400">Spams the chat with a quick help guide explaining the game.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-16">
+                            <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><i class="fas fa-border-all text-violet-500"></i> Live Grid Commands (Viewers)</h3>
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <div class="cmd-box">
+                                    <span class="cmd-code">!focus &lt;cell_number&gt;</span>
+                                    <p class="text-sm text-zinc-400 mb-2">Pulls a specific grid cell into the main viewing area. You can also just type an exclamation point and the number.</p>
+                                    <div class="bg-black/50 p-2 rounded text-xs font-mono text-zinc-500">Ex: !focus 2<br>Ex: !3</div>
+                                </div>
+                                <div class="cmd-box">
+                                    <span class="cmd-code">!queue &lt;url&gt; [title]</span>
+                                    <p class="text-sm text-zinc-400 mb-2">Suggest a YouTube, Kick, or X.com link to be added to the live grid. Requires moderator approval to be shown.</p>
+                                    <div class="bg-black/50 p-2 rounded text-xs font-mono text-zinc-500">Ex: !queue https://youtube.com/... Funny Cat Video</div>
+                                </div>
+                                <div class="cmd-box">
+                                    <span class="cmd-code">!refresh &lt;cell_number&gt;</span>
+                                    <p class="text-sm text-zinc-400">Forces a cell to reload if the stream or video has frozen/buffered.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-red-900/10 border border-red-900/30 p-8 rounded-3xl">
+                            <h3 class="text-2xl font-bold text-red-400 mb-6 flex items-center gap-3"><i class="fas fa-shield-halved"></i> Moderator & Admin Commands</h3>
+                            <p class="text-zinc-400 mb-6">These commands require Mod or Broadcaster privileges to execute.</p>
+                            
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <div class="cmd-box border-red-900/30">
+                                    <span class="cmd-code cmd-mod-code">!battle &lt;entry_cost&gt;</span>
+                                    <p class="text-sm text-zinc-400">Opens a Battle Royale lobby for 60 seconds. Viewers type !join to enter. Winner takes all.</p>
+                                </div>
+                                <div class="cmd-box border-red-900/30">
+                                    <span class="cmd-code cmd-mod-code">!ballsoff <span class="text-zinc-600 text-sm font-normal">or</span> !ballson</span>
+                                    <p class="text-sm text-zinc-400">Pauses or resumes the Tinko game completely.</p>
+                                </div>
+                                <div class="cmd-box border-red-900/30">
+                                    <span class="cmd-code cmd-mod-code">!addballs &lt;amount&gt; &lt;@user&gt;</span>
+                                    <p class="text-sm text-zinc-400">Injects currency into a specific user's account.</p>
+                                </div>
+                                <div class="cmd-box border-red-900/30">
+                                    <span class="cmd-code cmd-mod-code">!removeballs &lt;amount|all&gt; &lt;@user&gt;</span>
+                                    <p class="text-sm text-zinc-400">Removes currency. Use "all" to wipe an account to 0.</p>
+                                </div>
+                                <div class="cmd-box border-red-900/30">
+                                    <span class="cmd-code cmd-mod-code">!dropmax &lt;amount&gt;</span>
+                                    <p class="text-sm text-zinc-400">Sets the global limit for how many balls a viewer can drop in a single command to prevent lag.</p>
+                                </div>
+                                <div class="cmd-box border-red-900/30">
+                                    <span class="cmd-code cmd-mod-code">!url &lt;cell&gt; &lt;link&gt;</span>
+                                    <p class="text-sm text-zinc-400">Instantly overwrites a grid cell with a new video/stream link.</p>
+                                </div>
+                                <div class="cmd-box border-red-900/30">
+                                    <span class="cmd-code cmd-mod-code">!hide &lt;cell&gt; <span class="text-zinc-600 text-sm font-normal">or</span> !mute &lt;cell&gt;</span>
+                                    <p class="text-sm text-zinc-400">Toggles the visibility or audio of a specific grid cell.</p>
+                                </div>
+                                <div class="cmd-box border-red-900/30">
+                                    <span class="cmd-code cmd-mod-code">!swap &lt;cell_1&gt; &lt;cell_2&gt;</span>
+                                    <p class="text-sm text-zinc-400">Swaps the positions of two active feeds on the grid.</p>
+                                    <div class="bg-black/50 p-2 rounded text-xs font-mono text-zinc-500 mt-2">Ex: !swap 1 4</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div id="guide-container" class="hidden w-full p-4 md:p-8 pb-8">
+                    <div class="flex flex-col xl:flex-row gap-8 mx-0 md:mx-5">
+                        <div class="flex-1 max-w-4xl">
+                            <div class="bg-gradient-to-br from-zinc-900 to-black border border-zinc-800 p-6 md:p-8 rounded-3xl mb-10 shadow-2xl relative overflow-hidden">
+                                <div class="absolute top-0 right-0 p-8 opacity-5"><i class="fas fa-shapes text-9xl"></i></div>
+                                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 relative z-10">Welcome to the Toolkit</h2>
+                                <p class="text-base md:text-lg text-zinc-400 relative z-10 max-w-2xl leading-relaxed">A collection of highly customizable, browser-based overlays for your live streams. Completely free, no accounts, no installations, and no server required.</p>
+                            </div>
+                            
+                            <div class="space-y-12">
+                                <section>
+                                    <h3 class="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-3 border-b border-zinc-800 pb-2"><i class="fas fa-magic text-emerald-500"></i> How It Works</h3>
+                                    <p class="text-zinc-400 leading-relaxed mb-4">Unlike traditional overlays that require background software, these tools generate a customized <strong>URL string</strong>. All of your settings, colors, and text are saved directly inside that link.</p>
+                                    <ol class="list-decimal pl-5 text-zinc-300 space-y-2 font-medium">
+                                        <li>Select a tool from the sidebar.</li>
+                                        <li>Tweak the settings, fonts, and colors to match your brand.</li>
+                                        <li>Click the <strong>COPY</strong> button below the live preview.</li>
+                                        <li>In OBS (or your streaming software), add a new <strong>Browser Source</strong>.</li>
+                                        <li>Paste the URL, set the Width/Height to match your canvas (e.g., 1920x1080), and press OK.</li>
+                                    </ol>
+                                </section>
+                                <section>
+                                    <h3 class="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-3 border-b border-zinc-800 pb-2"><i class="fas fa-font text-blue-400"></i> Custom Google Fonts</h3>
+                                    <p class="text-zinc-400 leading-relaxed">Every tool in this kit supports dynamic <a href="https://fonts.google.com/" target="_blank" class="text-emerald-400 hover:underline">Google Fonts</a>. Instead of picking from a limited dropdown, you can type the exact name of any font available on Google's library into the "Font Family" box (e.g., <code>Bebas Neue</code>, <code>Roboto</code>, <code>Anton</code>, <code>Creepster</code>). The overlay will automatically download and apply the font in real-time.</p>
+                                </section>
+                                <section>
+                                    <h3 class="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-3 border-b border-zinc-800 pb-2"><i class="fas fa-pen-to-square text-violet-400"></i> Making Future Edits</h3>
+                                    <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl">
+                                        <p class="text-zinc-300 leading-relaxed">Because your settings are saved in the URL, if you want to make a change later (like updating a social handle or changing a color), you don't need to recreate the overlay from scratch.<br><br><strong class="text-emerald-400">Load Existing Settings:</strong> Simply paste your old generated URL back into the URL box at the bottom of any tool. The editor will instantly reverse-engineer the link and restore all of your colors, fonts, and settings so you can continue exactly where you left off!</p>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                        <div class="hidden xl:flex flex-col w-[400px] shrink-0 space-y-8 pt-2">
+                            <div class="space-y-2">
+                                <span class="text-xs font-bold text-zinc-500 uppercase tracking-wider ml-2"><i class="fas fa-desktop mr-1"></i> OBS Source Setup</span>
+                                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-1.5 shadow-xl">
+                                    <img src="./images/guide-obs-setup.png" class="w-full rounded-xl border border-zinc-800 object-cover" alt="OBS Setup" onerror="this.style.display='none'">
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <span class="text-xs font-bold text-zinc-500 uppercase tracking-wider ml-2"><i class="fas fa-eye mr-1"></i> Overlay Preview</span>
+                                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-1.5 shadow-xl">
+                                    <img src="./images/guide-tools-demo.png" class="w-full rounded-xl border border-zinc-800 object-cover" alt="Overlay Preview" onerror="this.style.display='none'">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tool-container" class="hidden w-full pb-8 flex-1"></div>
+
+                <div class="w-full p-4 md:p-8 mt-auto shrink-0">
+                    <div class="max-w-8xl mx-auto bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden min-h-[90px] flex flex-col items-center justify-center text-zinc-600 text-[10px] uppercase font-bold tracking-wider relative shadow-lg">
+                        <span class="absolute opacity-30 pointer-events-none">Advertisement</span>
+                        <ins class="adsbygoogle relative z-10" style="display:block; width:100%" data-ad-client="ca-pub-4775818915083385" data-ad-slot="1765415601" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</body>
+</html>
