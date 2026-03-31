@@ -132,6 +132,7 @@ function triggerGame(tool) {
     if (tool === 'weather') gamePath = '../secret/contra.html';
     else if (tool === 'watermark') gamePath = '../secret/superc.html';
     else if (tool === 'socials') gamePath = '../secret/tmnt.html';
+    else if (tool === 'gorillas') gamePath = 'https://archive.org/embed/msdos_Gorillas_1991';
 
     if (gamePath) {
         // 1. Create an independent game layer on TOP of the preview
