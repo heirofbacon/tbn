@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bacon Toolkit | Stream & Overlay Tools</title>
+    <title>Bacon Toolkit 🥓 | Stream & Overlay Tools</title>
     <meta name="description" content="Free, highly customizable, browser-based overlays for Twitch, YouTube, and Kick streamers. Interact with the live stream using BaconSuite.">
     <meta name="keywords" content="OBS, overlays, stream widgets, twitch tools, kick overlays, social rotator, stream weather, bouncing watermark, stream graphics">
     <meta name="author" content="The Bacon Network">
@@ -15,14 +15,14 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
     
-    <script src="https://cloud.umami.is/script.js" data-website-id="ef3ec6fc-39f3-40af-acd9-ed83f6d6e864"></script>
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="ef3ec6fc-39f3-40af-acd9-ed83f6d6e864"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4775818915083385" crossorigin="anonymous"></script>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
     <link rel="stylesheet" href="./style.css">
-    <script src="./app.js"></script>
+    <script defer src="./app.js"></script>
     
     <style>
         /* Specific page overrides to match your old layout */
@@ -50,10 +50,6 @@
                 <p class="hidden md:block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2 pl-2">Stream Portal</p>
                 <a class="nav-link active" data-target="home"><i class="fas fa-house w-5 text-center text-zinc-300"></i> Home</a>
                 <a class="nav-link" data-target="commands"><i class="fas fa-terminal w-5 text-center text-emerald-500"></i> Chat Commands</a>
-                
-                <!-- COMMUNITY SECTION - Handled as a dynamic tool now -->
-                <p class="hidden md:block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-6 mb-2 pl-2">Community</p>
-                <a class="nav-link" data-target="leaderboard"><i class="fas fa-trophy w-5 text-center text-amber-500"></i> Tinko Leaderboard</a>
                 
                 <p class="hidden md:block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-6 mb-2 pl-2">Free Overlays</p>
                 <a class="nav-link" data-target="guide"><i class="fas fa-book-open w-5 text-center"></i> Documentation</a>
@@ -88,9 +84,9 @@
         <main class="flex-1 overflow-y-auto bg-black/40 relative" id="main-scroll-area">
             <div class="flex flex-col min-h-full">
                 
-                <!-- Static Pages Containers -->
                 <div id="home-container" class="w-full p-4 md:p-8 pb-8">
                     <div class="max-w-8xl mx-auto space-y-8">
+                        
                         <div class="bg-gradient-to-br from-zinc-900 to-black border border-zinc-800 p-8 md:p-12 rounded-3xl shadow-2xl relative overflow-hidden">
                             <div class="absolute top-0 right-0 p-8 opacity-5"><i class="fas fa-bacon text-9xl"></i></div>
 
@@ -116,10 +112,12 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="bg-zinc-900 border border-zinc-800 p-8 rounded-3xl relative overflow-hidden group">
+                                <div class="absolute top-4 right-4 bg-amber-500/20 border border-amber-500/50 text-amber-400 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest shadow-[0_0_10px_rgba(245,158,11,0.2)]">Coming Soon</div>
                                 <h3 class="text-2xl font-bold text-white mb-3 flex items-center gap-3"><i class="fas fa-gamepad text-blue-500"></i> Tinko Mini-Game</h3>
                                 <p class="text-zinc-400 mb-4 leading-relaxed pr-10">Tinko is an interactive physics drop game that runs directly on the stream overlay. You earn balls passively just by hanging out in chat, which you can drop to win multipliers, challenge other viewers to duels, or enter Battle Royales.</p>
                             </div>
                             <div class="bg-zinc-900 border border-zinc-800 p-8 rounded-3xl relative overflow-hidden group">
+                                <div class="absolute top-4 right-4 bg-amber-500/20 border border-amber-500/50 text-amber-400 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest shadow-[0_0_10px_rgba(245,158,11,0.2)]">Coming Soon</div>
                                 <h3 class="text-2xl font-bold text-white mb-3 flex items-center gap-3"><i class="fas fa-border-all text-violet-500"></i> The Live Grid</h3>
                                 <p class="text-zinc-400 mb-4 leading-relaxed pr-10">The stream features a dynamic, multi-cell viewing grid. Viewers can use chat commands to queue up videos, focus on specific cells, and interact with the content being shown in real-time.</p>
                             </div>
@@ -174,6 +172,7 @@
                             </div>
                             <a href="https://linktr.ee/theheirofbacon" target="_blank" class="shrink-0 bg-zinc-800 hover:bg-zinc-700 text-white font-bold px-8 py-4 rounded-xl transition-all border border-zinc-700 whitespace-nowrap">Contact for Details</a>
                         </div>
+
                     </div>
                 </div>
 
@@ -183,6 +182,7 @@
                             <h2 class="text-4xl font-black text-white tracking-tight">Stream <span class="text-emerald-500">Commands</span></h2>
                             <p class="text-zinc-400 mt-2 text-lg">Everything you need to interact with the Tinko game and the Live Grid.</p>
                         </div>
+
                         <div class="mb-16">
                             <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><i class="fas fa-gamepad text-blue-500"></i> Tinko Commands (Viewers)</h3>
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -205,8 +205,87 @@
                                     <span class="cmd-code">!leaderboard [@user]</span>
                                     <p class="text-sm text-zinc-400">Shows the top 3 players on the server, as well as your current rank.</p>
                                 </div>
+                                <div class="cmd-box bg-blue-900/20 border-blue-800/50">
+                                    <span class="cmd-code text-blue-400">!duel &lt;@user&gt; &lt;wager&gt;</span>
+                                    <p class="text-sm text-zinc-400">Challenge another viewer to a 1v1 drop battle. Winner takes the whole pot!</p>
+                                    <div class="bg-black/50 p-2 rounded text-xs font-mono text-zinc-500 mt-2 border border-blue-900/50">Ex: !duel @scubasteve 50</div>
+                                </div>
+                                <div class="cmd-box bg-blue-900/20 border-blue-800/50">
+                                    <span class="cmd-code text-blue-400">!accept <span class="text-zinc-600 text-sm font-normal">or</span> !deny</span>
+                                    <p class="text-sm text-zinc-400">Accept or decline a pending duel challenge from another viewer.</p>
+                                </div>
+                                <div class="cmd-box bg-amber-900/20 border-amber-800/50">
+                                    <span class="cmd-code text-amber-400">!join</span>
+                                    <p class="text-sm text-zinc-400">Join an active Battle Royale lobby if a Moderator has opened one.</p>
+                                </div>
+                                <div class="cmd-box">
+                                    <span class="cmd-code">!tinko</span>
+                                    <p class="text-sm text-zinc-400">Spams the chat with a quick help guide explaining the game.</p>
+                                </div>
                             </div>
                         </div>
+
+                        <div class="mb-16">
+                            <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><i class="fas fa-border-all text-violet-500"></i> Live Grid Commands (Viewers)</h3>
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <div class="cmd-box">
+                                    <span class="cmd-code">!focus &lt;cell_number&gt;</span>
+                                    <p class="text-sm text-zinc-400 mb-2">Pulls a specific grid cell into the main viewing area. You can also just type an exclamation point and the number.</p>
+                                    <div class="bg-black/50 p-2 rounded text-xs font-mono text-zinc-500">Ex: !focus 2<br>Ex: !3</div>
+                                </div>
+                                <div class="cmd-box">
+                                    <span class="cmd-code">!queue &lt;url&gt; [title]</span>
+                                    <p class="text-sm text-zinc-400 mb-2">Suggest a YouTube, Kick, or X.com link to be added to the live grid. Requires moderator approval to be shown.</p>
+                                    <div class="bg-black/50 p-2 rounded text-xs font-mono text-zinc-500">Ex: !queue https://youtube.com/... Funny Cat Video</div>
+                                </div>
+                                <div class="cmd-box">
+                                    <span class="cmd-code">!refresh &lt;cell_number&gt;</span>
+                                    <p class="text-sm text-zinc-400">Forces a cell to reload if the stream or video has frozen/buffered.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-red-900/10 border border-red-900/30 p-8 rounded-3xl">
+                            <h3 class="text-2xl font-bold text-red-400 mb-6 flex items-center gap-3"><i class="fas fa-shield-halved"></i> Moderator & Admin Commands</h3>
+                            <p class="text-zinc-400 mb-6">These commands require Mod or Broadcaster privileges to execute.</p>
+                            
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <div class="cmd-box border-red-900/30">
+                                    <span class="cmd-code cmd-mod-code">!battle &lt;entry_cost&gt;</span>
+                                    <p class="text-sm text-zinc-400">Opens a Battle Royale lobby for 60 seconds. Viewers type !join to enter. Winner takes all.</p>
+                                </div>
+                                <div class="cmd-box border-red-900/30">
+                                    <span class="cmd-code cmd-mod-code">!ballsoff <span class="text-zinc-600 text-sm font-normal">or</span> !ballson</span>
+                                    <p class="text-sm text-zinc-400">Pauses or resumes the Tinko game completely.</p>
+                                </div>
+                                <div class="cmd-box border-red-900/30">
+                                    <span class="cmd-code cmd-mod-code">!addballs &lt;amount&gt; &lt;@user&gt;</span>
+                                    <p class="text-sm text-zinc-400">Injects currency into a specific user's account.</p>
+                                </div>
+                                <div class="cmd-box border-red-900/30">
+                                    <span class="cmd-code cmd-mod-code">!removeballs &lt;amount|all&gt; &lt;@user&gt;</span>
+                                    <p class="text-sm text-zinc-400">Removes currency. Use "all" to wipe an account to 0.</p>
+                                </div>
+                                <div class="cmd-box border-red-900/30">
+                                    <span class="cmd-code cmd-mod-code">!dropmax &lt;amount&gt;</span>
+                                    <p class="text-sm text-zinc-400">Sets the global limit for how many balls a viewer can drop in a single command to prevent lag.</p>
+                                </div>
+                                <div class="cmd-box border-red-900/30">
+                                    <span class="cmd-code cmd-mod-code">!url &lt;cell&gt; &lt;link&gt;</span>
+                                    <p class="text-sm text-zinc-400">Instantly overwrites a grid cell with a new video/stream link.</p>
+                                </div>
+                                <div class="cmd-box border-red-900/30">
+                                    <span class="cmd-code cmd-mod-code">!hide &lt;cell&gt; <span class="text-zinc-600 text-sm font-normal">or</span> !mute &lt;cell&gt;</span>
+                                    <p class="text-sm text-zinc-400">Toggles the visibility or audio of a specific grid cell.</p>
+                                </div>
+                                <div class="cmd-box border-red-900/30">
+                                    <span class="cmd-code cmd-mod-code">!swap &lt;cell_1&gt; &lt;cell_2&gt;</span>
+                                    <p class="text-sm text-zinc-400">Swaps the positions of two active feeds on the grid.</p>
+                                    <div class="bg-black/50 p-2 rounded text-xs font-mono text-zinc-500 mt-2 border border-red-900/30">Ex: !swap 1 4</div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -231,12 +310,46 @@
                                         <li>Paste the URL, set the Width/Height to match your canvas (e.g., 1920x1080), and press OK.</li>
                                     </ol>
                                 </section>
+
+                                <section class="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl">
+                                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-3"><i class="fas fa-rocket text-emerald-500"></i> Launch a Tool</h3>
+                                    <div class="flex flex-wrap gap-3">
+                                        <button onclick="loadTool('watermark')" class="bg-zinc-800 hover:bg-violet-900/50 hover:text-violet-400 border border-zinc-700 hover:border-violet-500/50 px-4 py-2 rounded-xl text-sm font-bold transition-colors flex items-center gap-2"><i class="fas fa-compact-disc"></i> Bouncing Watermark</button>
+                                        <button onclick="loadTool('socials')" class="bg-zinc-800 hover:bg-blue-900/50 hover:text-blue-400 border border-zinc-700 hover:border-blue-500/50 px-4 py-2 rounded-xl text-sm font-bold transition-colors flex items-center gap-2"><i class="fa-solid fa-share-nodes"></i> Socials Rotator</button>
+                                        <button onclick="loadTool('weather')" class="bg-zinc-800 hover:bg-sky-900/50 hover:text-sky-400 border border-zinc-700 hover:border-sky-500/50 px-4 py-2 rounded-xl text-sm font-bold transition-colors flex items-center gap-2"><i class="fa-solid fa-cloud-sun-rain"></i> Live Weather</button>
+                                        <button onclick="loadTool('gorillas')" class="bg-zinc-800 hover:bg-yellow-900/50 hover:text-yellow-400 border border-zinc-700 hover:border-yellow-500/50 px-4 py-2 rounded-xl text-sm font-bold transition-colors flex items-center gap-2"><span>🦍</span> Bacon Gorillas</button>
+                                    </div>
+                                </section>
+
+                                <section>
+                                    <h3 class="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-3 border-b border-zinc-800 pb-2"><i class="fas fa-font text-blue-400"></i> Custom Google Fonts</h3>
+                                    <p class="text-zinc-400 leading-relaxed">Every tool in this kit supports dynamic <a href="https://fonts.google.com/" target="_blank" class="text-emerald-400 hover:underline">Google Fonts</a>. Instead of picking from a limited dropdown, you can type the exact name of any font available on Google's library into the "Font Family" box (e.g., <code>Bebas Neue</code>, <code>Roboto</code>, <code>Anton</code>, <code>Creepster</code>). The overlay will automatically download and apply the font in real-time.</p>
+                                </section>
+                                <section>
+                                    <h3 class="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-3 border-b border-zinc-800 pb-2"><i class="fas fa-pen-to-square text-violet-400"></i> Making Future Edits</h3>
+                                    <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl">
+                                        <p class="text-zinc-300 leading-relaxed">Because your settings are saved in the URL, if you want to make a change later (like updating a social handle or changing a color), you don't need to recreate the overlay from scratch.<br><br><strong class="text-emerald-400">Load Existing Settings:</strong> Simply paste your old generated URL back into the URL box at the bottom of any tool. The editor will instantly reverse-engineer the link and restore all of your colors, fonts, and settings so you can continue exactly where you left off!</p>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                        <div class="hidden xl:flex flex-col w-[400px] shrink-0 space-y-8 pt-2">
+                            <div class="space-y-2">
+                                <span class="text-xs font-bold text-zinc-500 uppercase tracking-wider ml-2"><i class="fas fa-desktop mr-1"></i> OBS Source Setup</span>
+                                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-1.5 shadow-xl">
+                                    <img src="./images/guide-obs-setup.png" class="w-full rounded-xl border border-zinc-800 object-cover" alt="OBS Setup" onerror="this.style.display='none'">
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <span class="text-xs font-bold text-zinc-500 uppercase tracking-wider ml-2"><i class="fas fa-eye mr-1"></i> Overlay Preview</span>
+                                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-1.5 shadow-xl">
+                                    <img src="./images/guide-tools-demo.png" class="w-full rounded-xl border border-zinc-800 object-cover" alt="Overlay Preview" onerror="this.style.display='none'">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Dynamic Container for Tools & Leaderboard -->
                 <div id="tool-container" class="hidden w-full pb-8 flex-1"></div>
 
                 <div class="w-full p-4 md:p-8 mt-auto shrink-0">
