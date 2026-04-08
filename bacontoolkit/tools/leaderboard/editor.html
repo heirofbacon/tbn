@@ -1,0 +1,140 @@
+<div class="max-w-4xl mx-auto p-4 md:p-8 pb-8">
+    <div class="mb-8 border-b border-zinc-800 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+            <h2 class="text-4xl font-black text-white tracking-tight">Tinko <span class="text-amber-500">Leaderboard</span></h2>
+            <p class="text-zinc-400 mt-2 text-lg">The top ball droppers across all platforms.</p>
+        </div>
+        <div class="flex gap-3">
+            <select id="lb-sort" onchange="window.renderLeaderboard()" class="bg-zinc-900 border border-zinc-700 text-zinc-300 text-sm rounded-xl px-4 py-2 outline-none focus:border-amber-500 shadow-sm cursor-pointer">
+                <option value="score">Sort by Score</option>
+                <option value="name">Sort by Name</option>
+                <option value="platform">Sort by Platform</option>
+            </select>
+            <button onclick="window.fetchLeaderboard()" class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white px-4 py-2 rounded-xl transition-colors shadow-sm" title="Refresh Leaderboard"><i class="fas fa-sync-alt"></i></button>
+        </div>
+    </div>
+    <div id="lb-content" class="space-y-3">
+        <!-- Data injected here via JS -->
+    </div>
+</div>
+
+<script>
+(function() {
+    let lbData = [];
+
+    async function fetchLeaderboard() {
+        const container = document.getElementById('lb-content');
+        if (!container) return;
+        
+        container.innerHTML = '<div class="flex justify-center py-12"><i class="fas fa-spinner fa-spin text-4xl text-amber-500"></i></div>';
+        
+        try {
+            // Highly robust local network detection (catches localhost and 192.168.x.x IPs)
+            const host = window.location.hostname;
+            const isLocal = host === 'localhost' || host === '127.0.0.1' || host.startsWith('192.168.') || host.startsWith('10.');
+            const apiUrl = isLocal 
+                ? `http://${host}:3000/api/leaderboard` 
+                : 'https://core.tinko.online/api/leaderboard';
+
+            const res = await fetch(apiUrl);
+            
+            if (!res.ok) throw new Error(`API returned Status ${res.status}`);
+            
+            const data = await res.json();
+            
+            let rawArray = Array.isArray(data) ? data : Object.values(data);
+            
+            lbData = rawArray.filter(u => {
+                if (!u) return false;
+                return u.banned !== true && u.blocked !== true && u.status !== 'banned' && u.status !== 'blocked';
+            });
+            
+            renderLeaderboard();
+        } catch (err) {
+            console.error("Leaderboard Load Error:", err);
+            container.innerHTML = `<div class="text-center text-red-500 bg-red-900/10 border border-red-900/30 p-6 rounded-2xl"><i class="fas fa-exclamation-triangle text-2xl mb-2"></i><br>Failed to load leaderboard data.<br><span class="text-xs text-red-400 mt-2 block">Is the Node Server running and the data.json file created?</span></div>`;
+        }
+    }
+
+    function renderLeaderboard() {
+        const container = document.getElementById('lb-content');
+        if (!container) return;
+        
+        const sortMode = document.getElementById('lb-sort')?.value || 'score';
+        
+        lbData.sort((a, b) => {
+            if (sortMode === 'score') {
+                const scoreA = a.score ?? a.points ?? a.balls ?? 0;
+                const scoreB = b.score ?? b.points ?? b.balls ?? 0;
+                return scoreB - scoreA;
+            }
+            if (sortMode === 'name') {
+                const nameA = String(a.name || a.username || '').toLowerCase();
+                const nameB = String(b.name || b.username || '').toLowerCase();
+                return nameA.localeCompare(nameB);
+            }
+            if (sortMode === 'platform') {
+                const platA = String(a.platform || '').toLowerCase();
+                const platB = String(b.platform || '').toLowerCase();
+                return platA.localeCompare(platB);
+            }
+            return 0;
+        });
+
+        if (lbData.length === 0) {
+            container.innerHTML = '<div class="text-center text-zinc-500 py-12 bg-zinc-900 border border-zinc-800 rounded-2xl">No eligible players found.</div>';
+            return;
+        }
+
+        container.innerHTML = lbData.map((user, index) => {
+            let rankClass = "bg-zinc-800 text-zinc-400";
+            let rankMedal = `#${index + 1}`;
+            
+            if (sortMode === 'score') {
+                if (index === 0) { rankClass = "bg-yellow-500/20 text-yellow-500 border border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.2)]"; rankMedal = '<i class="fas fa-trophy"></i>'; }
+                else if (index === 1) { rankClass = "bg-zinc-300/20 text-zinc-300 border border-zinc-300/50"; rankMedal = '<i class="fas fa-medal"></i>'; }
+                else if (index === 2) { rankClass = "bg-orange-700/30 text-orange-400 border border-orange-700/50"; rankMedal = '<i class="fas fa-award"></i>'; }
+            }
+
+            const username = user.name || user.username || user.displayName || 'Unknown Player';
+            const pfp = user.profilePic || user.avatarUrl || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=18181b&color=10b981`;
+            const score = user.score ?? user.points ?? user.balls ?? 0;
+            
+            let platIcon = '';
+            let platName = String(user.platform || 'Unknown').toLowerCase();
+            if (platName.includes('twitch')) platIcon = '<i class="fab fa-twitch text-purple-500"></i>';
+            else if (platName.includes('youtube')) platIcon = '<i class="fab fa-youtube text-red-500"></i>';
+            else if (platName.includes('kick')) platIcon = '<img src="../../images/kick.svg" class="w-3 h-3 inline" alt="Kick" onerror="this.style.display=\'none\'">';
+            else platIcon = '<i class="fas fa-globe text-zinc-500"></i>';
+
+            return `
+                <div class="flex items-center gap-3 sm:gap-4 bg-zinc-900 border border-zinc-800 p-3 sm:p-4 rounded-2xl hover:border-zinc-700 transition-colors group">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 shrink-0 flex items-center justify-center rounded-xl font-black text-sm sm:text-base ${rankClass}">
+                        ${rankMedal}
+                    </div>
+                    <img src="${pfp}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-zinc-800 group-hover:border-emerald-500 transition-colors object-cover" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=18181b&color=10b981'">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                            <h4 class="text-white font-bold text-base sm:text-lg truncate">${username}</h4>
+                            <div class="w-fit bg-black border border-zinc-800 px-2 py-0.5 rounded text-[10px] flex items-center gap-1">
+                                ${platIcon} <span class="hidden sm:inline text-zinc-500 capitalize">${platName}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-emerald-400 font-black text-lg sm:text-2xl font-mono leading-none">${score.toLocaleString()}</div>
+                        <div class="text-[9px] sm:text-[10px] uppercase font-bold text-zinc-500 tracking-wider mt-1">Balls</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // Bind to window so the HTML buttons can trigger them
+    window.fetchLeaderboard = fetchLeaderboard;
+    window.renderLeaderboard = renderLeaderboard;
+
+    // Auto-fetch the moment this script loads
+    fetchLeaderboard();
+})();
+</script>
