@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bacon Toolkit 🥓 | Stream & Overlay Tools</title>
+    <title>Bacon Toolkit | Stream & Overlay Tools</title>
     <meta name="description" content="Free, highly customizable, browser-based overlays for Twitch, YouTube, and Kick streamers. Interact with the live stream using BaconSuite.">
     <meta name="keywords" content="OBS, overlays, stream widgets, twitch tools, kick overlays, social rotator, stream weather, bouncing watermark, stream graphics">
     <meta name="author" content="The Bacon Network">
@@ -15,14 +15,14 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
     
-    <script defer src="https://cloud.umami.is/script.js" data-website-id="ef3ec6fc-39f3-40af-acd9-ed83f6d6e864"></script>
+    <script src="https://cloud.umami.is/script.js" data-website-id="ef3ec6fc-39f3-40af-acd9-ed83f6d6e864"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4775818915083385" crossorigin="anonymous"></script>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
     <link rel="stylesheet" href="./style.css">
-    <script defer src="./app.js"></script>
+    <script src="./app.js"></script>
     
     <style>
         /* Specific page overrides to match your old layout */
@@ -51,6 +51,10 @@
                 <a class="nav-link active" data-target="home"><i class="fas fa-house w-5 text-center text-zinc-300"></i> Home</a>
                 <a class="nav-link" data-target="commands"><i class="fas fa-terminal w-5 text-center text-emerald-500"></i> Chat Commands</a>
                 
+                <p class="hidden md:block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-6 mb-2 pl-2">Community</p>
+                <a class="nav-link" data-target="leaderboard"><i class="fas fa-trophy w-5 text-center text-amber-500"></i> Tinko Leaderboard</a>
+                <a class="nav-link" data-target="pokedex"><i class="fas fa-tablet-screen-button w-5 text-center text-red-500"></i> Pokedex</a>
+
                 <p class="hidden md:block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-6 mb-2 pl-2">Free Overlays</p>
                 <a class="nav-link" data-target="guide"><i class="fas fa-book-open w-5 text-center"></i> Documentation</a>
                 <a class="nav-link" data-target="watermark"><i class="fas fa-compact-disc w-5 text-center text-violet-500"></i> Bouncing Watermark</a>
@@ -347,6 +351,45 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- NEW: LEADERBOARD CONTAINER -->
+                <div id="leaderboard-container" class="hidden w-full p-4 md:p-8 pb-8">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="mb-8 border-b border-zinc-800 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                            <div>
+                                <h2 class="text-4xl font-black text-white tracking-tight">Tinko <span class="text-amber-500">Leaderboard</span></h2>
+                                <p class="text-zinc-400 mt-2 text-lg">The top ball droppers across all platforms.</p>
+                            </div>
+                            <div class="flex gap-3">
+                                <select id="lb-sort" onchange="renderLeaderboard()" class="bg-zinc-900 border border-zinc-700 text-zinc-300 text-sm rounded-xl px-4 py-2 outline-none focus:border-amber-500 shadow-sm cursor-pointer">
+                                    <option value="score">Sort by Score</option>
+                                    <option value="name">Sort by Name</option>
+                                    <option value="platform">Sort by Platform</option>
+                                </select>
+                                <button onclick="fetchLeaderboard()" class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white px-4 py-2 rounded-xl transition-colors shadow-sm"><i class="fas fa-sync-alt"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div id="lb-notice"></div>
+                        <div id="lb-content" class="space-y-3"></div>
+                    </div>
+                </div>
+
+                <!-- NEW: POKEDEX CONTAINER -->
+                <div id="pokedex-container" class="hidden w-full p-4 md:p-8 pb-8">
+                    <div class="max-w-6xl mx-auto">
+                        <div class="mb-8 border-b border-zinc-800 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                            <div>
+                                <h2 class="text-4xl font-black text-white tracking-tight">Tinko <span class="text-red-500">Pokedex</span></h2>
+                                <p class="text-zinc-400 mt-2 text-lg">Discovered avatars and dropped entities.</p>
+                            </div>
+                            <button onclick="fetchPokedex()" class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white px-4 py-2 rounded-xl transition-colors shadow-sm"><i class="fas fa-sync-alt"></i></button>
+                        </div>
+                        
+                        <div id="dex-notice"></div>
+                        <div id="dex-content" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
                     </div>
                 </div>
 
