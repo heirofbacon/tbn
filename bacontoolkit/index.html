@@ -61,6 +61,9 @@
                 <a class="nav-link" data-target="socials"><i class="fa-solid fa-share-nodes w-5 text-center text-blue-500"></i> Socials Rotator</a>
                 <a class="nav-link" data-target="weather"><i class="fa-solid fa-cloud-sun-rain w-5 text-center text-sky-500"></i> Live Weather</a>
                 <a class="nav-link" data-target="gorillas"><span class="w-5 text-center inline-block">🦍</span> Bacon Gorillas</a>
+
+                <p class="hidden md:block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-6 mb-2 pl-2">Downloads</p>
+                <a class="nav-link" data-target="baconsuite"><i class="fas fa-server w-5 text-center text-emerald-500"></i> BaconSuite Core</a>
                 
                 <div class="md:hidden flex items-center gap-3 pl-4 pr-2 border-l border-zinc-800 ml-2 h-6">
                     <a href="https://x.com/heirofbacon" class="opacity-50 hover:opacity-100"><img src="./images/twitter.svg" class="w-4 h-4"></a>
@@ -203,7 +206,7 @@
                                 <div class="cmd-box">
                                     <span class="cmd-code">!color &lt;hex|color|emote|emoji|@user&gt;</span>
                                     <p class="text-sm text-zinc-400 mb-2">Permanently change what your balls look like. Use "me" to always drop your profile pic. (twitch only, kick requires your username)</p>
-                                    <div class="bg-black/50 p-2 rounded text-xs font-mono text-zinc-500">Ex: !color 🥓<br>Ex: !color #ff00ff</div>
+                                    <div class="bg-black/50 p-2 rounded text-xs font-mono text-zinc-500">Ex: !color 🍉<br>Ex: !color #ff00ff</div>
                                 </div>
                                 <div class="cmd-box">
                                     <span class="cmd-code">!leaderboard [@user]</span>
@@ -354,7 +357,104 @@
                     </div>
                 </div>
 
-                <!-- NEW: LEADERBOARD CONTAINER -->
+                <div id="baconsuite-container" class="hidden w-full p-4 md:p-8 pb-8">
+                    <div class="max-w-6xl mx-auto space-y-12">
+                        
+                        <div class="bg-gradient-to-br from-zinc-900 to-black border border-zinc-800 p-8 md:p-12 rounded-3xl shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
+                            <div class="absolute top-0 right-0 p-8 opacity-5"><i class="fas fa-server text-9xl"></i></div>
+                            <div class="flex-1 relative z-10">
+                                <h2 class="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight">BaconSuite <span class="text-emerald-500">Core</span></h2>
+                                <p class="text-lg md:text-xl text-zinc-400 max-w-2xl leading-relaxed">
+                                    A modular, locally-hosted streaming engine that unifies interactions across Twitch, Kick, YouTube, Nightbot, and OBS. Designed entirely on Node.js and Socket.IO.
+                                </p>
+                            </div>
+                            <div class="shrink-0 relative z-10">
+                                <button class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-8 py-4 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all border border-emerald-500/50 flex items-center justify-center gap-3 w-full md:w-auto">
+                                    <i class="fas fa-download"></i> Download V4 Core
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-red-900/10 border border-red-900/30 p-6 md:p-8 rounded-3xl relative overflow-hidden shadow-lg">
+                            <h3 class="text-2xl font-bold text-red-400 mb-3 flex items-center gap-3"><i class="fas fa-lock text-red-500"></i> Core Connections Locked</h3>
+                            <p class="text-zinc-300 leading-relaxed mb-0">The files providing working connections for Twitch, Kick, YouTube, Nightbot, and OBS are <strong class="text-red-400">LOCKED</strong>. They function flawlessly as intended and <strong>do not need to be changed or modified when adding new modules.</strong> If modifications to these core files are absolutely necessary, they require review before proceeding. Interface with them strictly via their exposed Socket.IO events.</p>
+                        </div>
+
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3 border-b border-zinc-800 pb-2"><i class="fas fa-power-off text-emerald-500"></i> Boot Process</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl">
+                                    <div class="w-10 h-10 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center mb-4 text-emerald-500 font-black">1</div>
+                                    <h4 class="text-white font-bold mb-2">Environment Setup</h4>
+                                    <p class="text-sm text-zinc-400 leading-relaxed">Navigate to <code>baconsuite-core/engines/</code>. Ensure the <code>.env</code> file is fully populated with your platform API keys and OBS credentials. Or you can simply run the setup wizard after you boot the suite.</p>
+                                </div>
+                                <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl">
+                                    <div class="w-10 h-10 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center mb-4 text-emerald-500 font-black">2</div>
+                                    <h4 class="text-white font-bold mb-2">Install Dependencies</h4>
+                                    <p class="text-sm text-zinc-400 leading-relaxed">Open a terminal in the root directory and run <code>npm install</code>. Or run the <code>install.bat</code> script. This generates your node modules.</p>
+                                </div>
+                                <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl">
+                                    <div class="w-10 h-10 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center mb-4 text-emerald-500 font-black">3</div>
+                                    <h4 class="text-white font-bold mb-2">Boot the Suite</h4>
+                                    <p class="text-sm text-zinc-400 leading-relaxed">Run the provided <code>start.bat</code> script. Access your main command center at <code>http://localhost:3000/admin</code>.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3 border-b border-zinc-800 pb-2"><i class="fas fa-table-cells text-blue-500"></i> Module: Grid 2.0</h3>
+                            <p class="text-zinc-400 mb-6 leading-relaxed">Grid 2.0 is an interactive, highly dynamic media grid allowing streamers to display URLs, images, and videos dynamically on-screen across up to 8 independent cells.</p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="cmd-box">
+                                    <span class="cmd-code">Viewer/OBS Mode</span>
+                                    <p class="text-sm text-zinc-400">Add <code>http://localhost:3000/modules/grid2.0/viewer.html</code> as an OBS Browser Source for the live, transparent output.</p>
+                                </div>
+                                <div class="cmd-box">
+                                    <span class="cmd-code">OBS Dock Mode</span>
+                                    <p class="text-sm text-zinc-400">Append <code>?mode=dock</code> to the control panel URL. This strips away extra UI padding to fit inside a slim OBS custom dock.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3 border-b border-zinc-800 pb-2"><i class="fas fa-camera text-violet-500"></i> Module: OBS Control</h3>
+                            <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl mb-6">
+                                <p class="text-zinc-300 leading-relaxed mb-4">Connects directly to OBS Studio via WebSocket (Tools -> WebSocket Server Settings). Ensure port 4455 is open and provide your password in the BaconSuite Admin Dashboard.</p>
+                                <ul class="list-disc pl-5 text-zinc-400 space-y-2 text-sm">
+                                    <li><strong class="text-white">Live Preview:</strong> Fetches low-latency JPEG frames of your current scene using <code>GetSourceScreenshot</code>.</li>
+                                    <li><strong class="text-white">Scene Switching:</strong> Fetches all available scenes and creates clickable buttons to transition instantly.</li>
+                                    <li><strong class="text-white">Source Toggling:</strong> Dynamically extracts items in your active scene to toggle visibility.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3 border-b border-zinc-800 pb-2"><i class="fas fa-code text-amber-500"></i> Developer Guide</h3>
+                            <p class="text-zinc-400 mb-6 leading-relaxed">To create a new module, create a new folder in <code>/modules/</code>. The core <code>index.js</code> automatically scans this directory on boot.</p>
+                            
+                            <div class="bg-black border border-zinc-800 p-6 rounded-2xl font-mono text-sm overflow-x-auto text-zinc-300 shadow-inner">
+                                <div class="text-emerald-500 mb-4">// Required Backend Engine Structure (engine.js)</div>
+                                <span class="text-blue-400">export default class</span> <span class="text-yellow-200">CustomEngine</span> {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">constructor</span>({ app, io, chatEngine, vault }) {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">this</span>.app = app;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">this</span>.io = io;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">this</span>.vault = vault;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;}<br><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">init</span>() {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.log(<span class="text-green-400">'[Module: Custom] Initializing...'</span>);<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">this</span>.io.on(<span class="text-green-400">'connection'</span>, (socket) => {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-zinc-500">// Handle logic here</span><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;});<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
                 <div id="leaderboard-container" class="hidden w-full p-4 md:p-8 pb-8">
                     <div class="max-w-4xl mx-auto">
                         <div class="mb-8 border-b border-zinc-800 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -377,7 +477,6 @@
                     </div>
                 </div>
 
-                <!-- NEW: POKEDEX CONTAINER -->
                 <div id="pokedex-container" class="hidden w-full p-4 md:p-8 pb-8">
                     <div class="max-w-6xl mx-auto">
                         <div class="mb-8 border-b border-zinc-800 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">

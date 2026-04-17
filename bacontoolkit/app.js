@@ -30,13 +30,13 @@ function loadTool(target) {
     if (scrA) scrA.scrollTo(0, 0); 
 
     // Hide ALL containers first to reset state
-    ['home-container', 'commands-container', 'guide-container', 'leaderboard-container', 'pokedex-container', 'tool-container'].forEach(id => {
+    ['home-container', 'commands-container', 'guide-container', 'leaderboard-container', 'pokedex-container', 'baconsuite-container', 'tool-container'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add('hidden');
     });
 
     // Handle Static Routes (Pages that don't need to fetch HTML)
-    if (['home', 'commands', 'guide', 'leaderboard', 'pokedex'].includes(target)) {
+    if (['home', 'commands', 'guide', 'leaderboard', 'pokedex', 'baconsuite'].includes(target)) {
         const targetContainer = document.getElementById(`${target}-container`);
         if (targetContainer) targetContainer.classList.remove('hidden');
         
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (initialTool) {
         loadTool(initialTool);
-    } else if (initialPage && ['commands', 'guide', 'leaderboard', 'pokedex'].includes(initialPage)) {
+    } else if (initialPage && ['commands', 'guide', 'leaderboard', 'pokedex', 'baconsuite'].includes(initialPage)) {
         loadTool(initialPage);
     } else {
         loadTool('home'); // Default load
@@ -211,7 +211,6 @@ function renderLeaderboard() {
             <div class="flex items-center gap-3 sm:gap-4 bg-zinc-900 border border-zinc-800 p-3 sm:p-4 rounded-2xl hover:border-zinc-700 transition-colors group">
                 <div class="w-10 h-10 sm:w-12 sm:h-12 shrink-0 flex items-center justify-center rounded-xl font-black text-sm sm:text-base ${rankClass}">${rankMedal}</div>
                 
-                <!-- True Fallback Avatar (No UI-Avatars) -->
                 <div class="relative w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-full border-2 border-zinc-800 group-hover:border-emerald-500 transition-colors bg-zinc-800 flex items-center justify-center overflow-hidden shadow-inner">
                     <i class="fas fa-user text-zinc-600 text-xl absolute z-0"></i>
                     ${pfp ? `<img src="${pfp}" class="absolute inset-0 w-full h-full object-cover z-10" onerror="this.style.display='none'">` : ''}
@@ -219,10 +218,8 @@ function renderLeaderboard() {
 
                 <div class="flex-1 min-w-0">
                     <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                        <!-- Plain text username -->
                         <h4 class="text-white font-bold text-base sm:text-lg truncate">${username}</h4>
                         
-                        <!-- Clickable platform tag -->
                         <a href="${platUrl}" target="_blank" rel="noopener noreferrer" class="w-fit bg-black border border-zinc-800 px-2 py-0.5 rounded text-[10px] flex items-center gap-1 hover:border-emerald-500 transition-colors cursor-pointer group/link">
                             ${platIcon} <span class="hidden sm:inline text-zinc-500 capitalize group-hover/link:text-zinc-300 transition-colors">${platName}</span>
                         </a>
@@ -564,7 +561,7 @@ document.addEventListener('keydown', (e) => {
         return;
     }
 
-    if (['home', 'commands', 'guide', 'leaderboard', 'pokedex'].includes(activeTool)) {
+    if (['home', 'commands', 'guide', 'leaderboard', 'pokedex', 'baconsuite'].includes(activeTool)) {
         konamiIndex = 0;
         return;
     }
