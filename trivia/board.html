@@ -12,17 +12,36 @@
         #auth-overlay input { background: #12131c; border: 2px solid #262838; color: white; padding: 12px 20px; border-radius: 8px; font-size: 16px; outline: none; width: 280px; text-align: center; }
         #auth-overlay button { background: #53fc18; color: black; border: none; padding: 12px 30px; font-weight: 900; border-radius: 8px; cursor: pointer; text-transform: uppercase; }
         #auth-error { color: #ef4444; font-size: 12px; font-weight: bold; display: none; }
+        
+        /* Camera Safe Area Styling */
+        .camera-safe-area {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: rgba(15, 16, 24, 0.6);
+            border: 2px dashed #262838;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #585c7b;
+            font-size: 14px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            flex-shrink: 0;
+            text-align: center;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
 
-    <!-- PASSWORD LOCK SCREEN FOR GITHUB PAGES -->
     <div id="auth-overlay">
         <h2 style="color: #53fc18; font-weight: 900; text-transform: uppercase; letter-spacing: 2px;">Restricted Board</h2>
-        <p style="color: #8b90b0; font-size: 13px;">Enter operator password to mount display</p>
-        <input type="password" id="board-password" placeholder="Password">
+        <p style="color: #8b90b0; font-size: 13px;">Enter active challenger channel name to unlock</p>
+        <input type="password" id="board-password" placeholder="Channel Name">
         <button onclick="unlockBoard()">Unlock Board</button>
-        <span id="auth-error">Incorrect Password</span>
+        <span id="auth-error">Incorrect Challenger Name / Not Connected</span>
     </div>
 
     <div id="top-hud">
@@ -41,6 +60,12 @@
 
     <div id="main-container">
         <div id="sidebar">
+            
+            <!-- CAMERA SAFE AREA BOX -->
+            <div class="camera-safe-area">
+                CAMERA<br>SAFE AREA
+            </div>
+
             <div class="sidebar-title" style="margin-top: 4px; border-bottom: 2px solid var(--kick-green); padding-bottom: 8px;">
                 <span><i class="fa-solid fa-square" style="color:var(--kick-green); font-size:10px;"></i> BATTLE LEADERBOARD</span>
             </div>
@@ -93,94 +118,90 @@
         </div>
     </div>
 
-    <!-- Replace your unlockBoard() function in board.html with this: -->
-<script>
-    let socket;
+    <script>
+        let socket;
 
-    function unlockBoard() {
-        const inputName = document.getElementById('board-password').value.trim();
-        if (!inputName) return;
+        function unlockBoard() {
+            const inputName = document.getElementById('board-password').value.trim();
+            if (!inputName) return;
 
-        // Connect to your Cloudflare tunnel public endpoint
-        socket = io('https://trivia987654321.heirofbacon.com');
+            socket = io('https://trivia987654321.heirofbacon.com');
 
-        // Send the typed name to the server to verify against ACTIVE_CHALLENGER
-        socket.emit('authenticate_board', inputName);
+            socket.emit('authenticate_board', inputName);
 
-        socket.on('auth_success', () => {
-            document.getElementById('auth-overlay').style.display = 'none';
-            initBoardListeners();
-        });
+            socket.on('auth_success', () => {
+                document.getElementById('auth-overlay').style.display = 'none';
+                initBoardListeners();
+            });
 
-        socket.on('auth_error', (msg) => {
-            document.getElementById('auth-error').innerText = "Incorrect Challenger Name / Not Connected";
-            document.getElementById('auth-error').style.display = 'block';
-            if (socket) socket.disconnect();
-        });
-    }
+            socket.on('auth_error', (msg) => {
+                document.getElementById('auth-error').style.display = 'block';
+                if (socket) socket.disconnect();
+            });
+        }
 
-    function initBoardListeners() {
-        socket.emit('mirror_online');
+        function initBoardListeners() {
+            socket.emit('mirror_online');
 
-        socket.on('mirror_sync_state', (data) => {
-            document.getElementById('q-timer').innerText = data.qTimer;
-            document.getElementById('current-q').innerText = data.currentQ;
-            document.getElementById('total-q').innerText = data.totalQ;
-            document.getElementById('category-text').innerText = data.categoryText;
-            document.getElementById('question-text').innerHTML = data.questionText;
-            document.getElementById('timer-bar-fill').style.transform = data.timerBarFill;
-            
-            document.getElementById('text-A').innerText = data.textA;
-            document.getElementById('text-B').innerText = data.textB;
-            document.getElementById('text-C').innerText = data.textC;
-            document.getElementById('text-D').innerText = data.textD;
-            
-            document.getElementById('votes-A').innerText = data.votesA;
-            document.getElementById('votes-B').innerText = data.votesB;
-            document.getElementById('votes-C').innerText = data.votesC;
-            document.getElementById('votes-D').innerText = data.votesD;
-            
-            document.getElementById('opt-A').className = data.classA;
-            document.getElementById('opt-B').className = data.classB;
-            document.getElementById('opt-C').className = data.classC;
-            document.getElementById('opt-D').className = data.classD;
-            
-            document.getElementById('leaderboard-list').innerHTML = data.leaderboard;
-            document.getElementById('hud-round-num').innerText = data.roundNum;
-            document.getElementById('hud-lives').innerText = data.lives;
-            document.getElementById('hud-best-record').innerText = data.bestRecord;
-
-            const vsHeader = document.getElementById('battle-vs-header');
-            const banner = document.getElementById('battle-banner');
-
-            if (data.battleActive || data.showVsHeader) {
-                vsHeader.style.display = 'flex';
-                document.getElementById('vs-host-name').innerText = data.vsHostName;
-                document.getElementById('vs-challenger-name').innerText = data.vsChallengerName;
+            socket.on('mirror_sync_state', (data) => {
+                document.getElementById('q-timer').innerText = data.qTimer;
+                document.getElementById('current-q').innerText = data.currentQ;
+                document.getElementById('total-q').innerText = data.totalQ;
+                document.getElementById('category-text').innerText = data.categoryText;
+                document.getElementById('question-text').innerHTML = data.questionText;
+                document.getElementById('timer-bar-fill').style.transform = data.timerBarFill;
                 
-                if (data.vsHostImg) {
-                    const hi = document.getElementById('vs-host-img');
-                    hi.src = data.vsHostImg;
-                    hi.style.display = 'block';
-                }
-                if (data.vsChallengerImg) {
-                    const ci = document.getElementById('vs-challenger-img');
-                    ci.src = data.vsChallengerImg;
-                    ci.style.display = 'block';
-                }
-            } else {
-                vsHeader.style.display = 'none';
-            }
+                document.getElementById('text-A').innerText = data.textA;
+                document.getElementById('text-B').innerText = data.textB;
+                document.getElementById('text-C').innerText = data.textC;
+                document.getElementById('text-D').innerText = data.textD;
+                
+                document.getElementById('votes-A').innerText = data.votesA;
+                document.getElementById('votes-B').innerText = data.votesB;
+                document.getElementById('votes-C').innerText = data.votesC;
+                document.getElementById('votes-D').innerText = data.votesD;
+                
+                document.getElementById('opt-A').className = data.classA;
+                document.getElementById('opt-B').className = data.classB;
+                document.getElementById('opt-C').className = data.classC;
+                document.getElementById('opt-D').className = data.classD;
+                
+                document.getElementById('leaderboard-list').innerHTML = data.leaderboard;
+                document.getElementById('hud-round-num').innerText = data.roundNum;
+                document.getElementById('hud-lives').innerText = data.lives;
+                document.getElementById('hud-best-record').innerText = data.bestRecord;
 
-            if (data.battleActive) {
-                banner.style.display = 'flex';
-                document.getElementById('score-host').innerText = data.scoreHost;
-                document.getElementById('score-challenger').innerText = data.scoreChallenger;
-            } else {
-                banner.style.display = 'none';
-            }
-        });
-    }
-</script>
+                const vsHeader = document.getElementById('battle-vs-header');
+                const banner = document.getElementById('battle-banner');
+
+                if (data.battleActive || data.showVsHeader) {
+                    vsHeader.style.display = 'flex';
+                    document.getElementById('vs-host-name').innerText = data.vsHostName;
+                    document.getElementById('vs-challenger-name').innerText = data.vsChallengerName;
+                    
+                    if (data.vsHostImg) {
+                        const hi = document.getElementById('vs-host-img');
+                        hi.src = data.vsHostImg;
+                        hi.style.display = 'block';
+                    }
+                    if (data.vsChallengerImg) {
+                        const ci = document.getElementById('vs-challenger-img');
+                        ci.src = data.vsChallengerImg;
+                        ci.style.display = 'block';
+                    }
+                } else {
+                    vsHeader.style.display = 'none';
+                }
+
+                if (data.battleActive) {
+                    banner.style.display = 'flex';
+                    document.getElementById('score-host').innerText = data.scoreHost;
+                    document.getElementById('score-challenger').innerText = data.scoreChallenger;
+                } else {
+                    banner.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
