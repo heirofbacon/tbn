@@ -4,14 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Stream Trivia - Public Board</title>
-    <!-- Pull styles directly from your local server or copy/paste trivia.css into your GitHub repo -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <!-- Change this from the localhost link to a local relative path -->
-    <link rel="stylesheet" href="trivia.css"> 
-    <!-- IMPORTANT: Point Socket.io to your public tunnel URL -->
-    <script src="https://trivia987654321.heirofbacon.com/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="trivia.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+    <style>
+        #auth-overlay { position: fixed; inset: 0; background: #0b0c13; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; font-family: 'Segoe UI', sans-serif; }
+        #auth-overlay input { background: #12131c; border: 2px solid #262838; color: white; padding: 12px 20px; border-radius: 8px; font-size: 16px; outline: none; width: 280px; text-align: center; }
+        #auth-overlay button { background: #53fc18; color: black; border: none; padding: 12px 30px; font-weight: 900; border-radius: 8px; cursor: pointer; text-transform: uppercase; }
+        #auth-error { color: #ef4444; font-size: 12px; font-weight: bold; display: none; }
+    </style>
 </head>
 <body>
+
+    <!-- PASSWORD LOCK SCREEN FOR GITHUB PAGES -->
+    <div id="auth-overlay">
+        <h2 style="color: #53fc18; font-weight: 900; text-transform: uppercase; letter-spacing: 2px;">Restricted Board</h2>
+        <p style="color: #8b90b0; font-size: 13px;">Enter operator password to mount display</p>
+        <input type="password" id="board-password" placeholder="Password">
+        <button onclick="unlockBoard()">Unlock Board</button>
+        <span id="auth-error">Incorrect Password</span>
+    </div>
+
     <div id="top-hud">
         <div class="hud-left">
             <div class="game-logo"><i class="fa-solid fa-chevron-right" style="color: var(--kick-green);"></i> BACON TRIVIA</div>
@@ -81,68 +94,84 @@
     </div>
 
     <script>
-        // Connect directly to your secure tunnel backend
-        const socket = io('https://arcade-bridge.yourdomain.com');
-        socket.emit('mirror_online');
+        function unlockBoard() {
+            const pwd = document.getElementById('board-password').value;
+            // Set your secret board password here
+            if (pwd === "BaconTrivia2026!") {
+                document.getElementById('auth-overlay').style.display = 'none';
+                initSocketConnection();
+            } else {
+                document.getElementById('auth-error').style.display = 'block';
+            }
+        }
 
-        socket.on('mirror_sync_state', (data) => {
-            document.getElementById('q-timer').innerText = data.qTimer;
-            document.getElementById('current-q').innerText = data.currentQ;
-            document.getElementById('total-q').innerText = data.totalQ;
-            document.getElementById('category-text').innerText = data.categoryText;
-            document.getElementById('question-text').innerHTML = data.questionText;
-            document.getElementById('timer-bar-fill').style.transform = data.timerBarFill;
-            
-            document.getElementById('text-A').innerText = data.textA;
-            document.getElementById('text-B').innerText = data.textB;
-            document.getElementById('text-C').innerText = data.textC;
-            document.getElementById('text-D').innerText = data.textD;
-            
-            document.getElementById('votes-A').innerText = data.votesA;
-            document.getElementById('votes-B').innerText = data.votesB;
-            document.getElementById('votes-C').innerText = data.votesC;
-            document.getElementById('votes-D').innerText = data.votesD;
-            
-            document.getElementById('opt-A').className = data.classA;
-            document.getElementById('opt-B').className = data.classB;
-            document.getElementById('opt-C').className = data.classC;
-            document.getElementById('opt-D').className = data.classD;
-            
-            document.getElementById('leaderboard-list').innerHTML = data.leaderboard;
-            document.getElementById('hud-round-num').innerText = data.roundNum;
-            document.getElementById('hud-lives').innerText = data.lives;
-            document.getElementById('hud-best-record').innerText = data.bestRecord;
+        function initSocketConnection() {
+            // Connect to your Cloudflare Tunnel
+            const socket = io('https://trivia987654321.heirofbacon.com', {
+                auth: { token: "BaconSecretTrivia2026!" }
+            });
 
-            const vsHeader = document.getElementById('battle-vs-header');
-            const banner = document.getElementById('battle-banner');
+            socket.emit('mirror_online');
 
-            if (data.battleActive || data.showVsHeader) {
-                vsHeader.style.display = 'flex';
-                document.getElementById('vs-host-name').innerText = data.vsHostName;
-                document.getElementById('vs-challenger-name').innerText = data.vsChallengerName;
+            socket.on('mirror_sync_state', (data) => {
+                document.getElementById('q-timer').innerText = data.qTimer;
+                document.getElementById('current-q').innerText = data.currentQ;
+                document.getElementById('total-q').innerText = data.totalQ;
+                document.getElementById('category-text').innerText = data.categoryText;
+                document.getElementById('question-text').innerHTML = data.questionText;
+                document.getElementById('timer-bar-fill').style.transform = data.timerBarFill;
                 
-                if (data.vsHostImg) {
-                    const hi = document.getElementById('vs-host-img');
-                    hi.src = data.vsHostImg;
-                    hi.style.display = 'block';
-                }
-                if (data.vsChallengerImg) {
-                    const ci = document.getElementById('vs-challenger-img');
-                    ci.src = data.vsChallengerImg;
-                    ci.style.display = 'block';
-                }
-            } else {
-                vsHeader.style.display = 'none';
-            }
+                document.getElementById('text-A').innerText = data.textA;
+                document.getElementById('text-B').innerText = data.textB;
+                document.getElementById('text-C').innerText = data.textC;
+                document.getElementById('text-D').innerText = data.textD;
+                
+                document.getElementById('votes-A').innerText = data.votesA;
+                document.getElementById('votes-B').innerText = data.votesB;
+                document.getElementById('votes-C').innerText = data.votesC;
+                document.getElementById('votes-D').innerText = data.votesD;
+                
+                document.getElementById('opt-A').className = data.classA;
+                document.getElementById('opt-B').className = data.classB;
+                document.getElementById('opt-C').className = data.classC;
+                document.getElementById('opt-D').className = data.classD;
+                
+                document.getElementById('leaderboard-list').innerHTML = data.leaderboard;
+                document.getElementById('hud-round-num').innerText = data.roundNum;
+                document.getElementById('hud-lives').innerText = data.lives;
+                document.getElementById('hud-best-record').innerText = data.bestRecord;
 
-            if (data.battleActive) {
-                banner.style.display = 'flex';
-                document.getElementById('score-host').innerText = data.scoreHost;
-                document.getElementById('score-challenger').innerText = data.scoreChallenger;
-            } else {
-                banner.style.display = 'none';
-            }
-        });
+                const vsHeader = document.getElementById('battle-vs-header');
+                const banner = document.getElementById('battle-banner');
+
+                if (data.battleActive || data.showVsHeader) {
+                    vsHeader.style.display = 'flex';
+                    document.getElementById('vs-host-name').innerText = data.vsHostName;
+                    document.getElementById('vs-challenger-name').innerText = data.vsChallengerName;
+                    
+                    if (data.vsHostImg) {
+                        const hi = document.getElementById('vs-host-img');
+                        hi.src = data.vsHostImg;
+                        hi.style.display = 'block';
+                    }
+                    if (data.vsChallengerImg) {
+                        const ci = document.getElementById('vs-challenger-img');
+                        ci.src = data.vsChallengerImg;
+                        ci.style.display = 'block';
+                    }
+                } else {
+                    vsHeader.style.display = 'none';
+                }
+
+                if (data.battleActive) {
+                    banner.style.display = 'flex';
+                    document.getElementById('score-host').innerText = data.scoreHost;
+                    document.getElementById('score-challenger').innerText = data.scoreChallenger;
+                } else {
+                    banner.style.display = 'none';
+                }
+            });
+        }
     </script>
 </body>
 </html>
