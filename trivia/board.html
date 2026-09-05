@@ -95,30 +95,31 @@
 
     <!-- Replace your unlockBoard() function in board.html with this: -->
 <script>
+    let socket;
+
     function unlockBoard() {
         const inputName = document.getElementById('board-password').value.trim();
         if (!inputName) return;
 
-        // Attempt connection using the input as the dynamic token (challenger name)
-        const socket = io('https://trivia987654321.heirofbacon.com', {
-            auth: { token: inputName }
-        });
+        // Connect to your Cloudflare tunnel public endpoint
+        socket = io('https://trivia987654321.heirofbacon.com');
 
-        socket.on('connect', () => {
-            // Success! Hide the password prompt and start rendering the board
+        // Send the typed name to the server to verify against ACTIVE_CHALLENGER
+        socket.emit('authenticate_board', inputName);
+
+        socket.on('auth_success', () => {
             document.getElementById('auth-overlay').style.display = 'none';
-            initBoardListeners(socket);
+            initBoardListeners();
         });
 
-        socket.on('connect_error', (err) => {
-            // Wrong channel name entered
-            document.getElementById('auth-error').innerText = "Incorrect Channel Name / Not Connected";
+        socket.on('auth_error', (msg) => {
+            document.getElementById('auth-error').innerText = "Incorrect Challenger Name / Not Connected";
             document.getElementById('auth-error').style.display = 'block';
-            socket.disconnect();
+            if (socket) socket.disconnect();
         });
     }
 
-    function initBoardListeners(socket) {
+    function initBoardListeners() {
         socket.emit('mirror_online');
 
         socket.on('mirror_sync_state', (data) => {
