@@ -5,7 +5,7 @@ function getApiUrl(endpoint) {
     if (host === 'localhost' || host === '127.0.0.1' || host === 'jserver.local' || host.startsWith('192.168.') || host.startsWith('10.')) {
         return `http://${host}:3000${endpoint}`;
     }
-    return `https://core.tinko.online${endpoint}`;
+    return `https://johnnys.tinko.online${endpoint}`;
 }
 
 let activeTool = 'home'; // Track the current tool for the Easter Eggs
