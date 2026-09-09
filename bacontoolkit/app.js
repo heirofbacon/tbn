@@ -418,7 +418,7 @@ function renderPokedex() {
             ${pk.locked ? '<div class="absolute top-2 left-2 text-sm">🔒</div>' : ''}
             
             <div class="w-full h-24 mb-2 flex items-center justify-center">
-                <img src="${spriteUrl}" class="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform drop-shadow-[0_4px_6px_rgba(0,0,0,0.5)]" onerror="this.src=getApiUrl('/assets/sprites/normal/0.png')">
+                <img src="${spriteUrl}" class="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform drop-shadow-[0_4px_6px_rgba(0,0,0,0.5)]" onerror="this.onerror=null; this.src=getApiUrl('/assets/sprites/normal/0.png');">
             </div>
 
             <h4 class="font-bold text-lg text-center truncate w-full capitalize text-red-400">${pk.name || 'Unknown'}</h4>
