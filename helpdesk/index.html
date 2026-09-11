@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRL Pro SRT Setup Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>IRL Pro to OBS Setup</h1>
+        <p>A streamlined guide to getting your Android camera feed into OBS using an SRT connection with no external servers.</p>
+    </header>
+
+    <div class="container">
+        
+        <!-- Phase 1 -->
+        <div class="card">
+            <h2>Local Network (At Home)</h2>
+            <p style="color: var(--text-muted);">Follow these steps when your phone and streaming PC are on the exact same WiFi network. ⚠️ Keep in mind you will not be able to use bonding on your local network.</p>
+
+            <h3>1. Get Your PC's IP Address</h3>
+            <ol>
+                <li>Press <code>Win + R</code>, type <code>cmd</code>, and hit Enter.</li>
+                <li>Type <code>ipconfig</code> and press Enter.</li>
+                <li>Locate your <strong>IPv4 Address</strong> (usually looks like <code>192.168.1.X</code>) and write it down.</li>
+            </ol>
+
+            <h3>2. Set Up OBS to Receive Video</h3>
+            <ol>
+                <li>In OBS, add a new <strong>Media Source</strong> to your scene and name it "Phone Camera".</li>
+                <li><strong>Uncheck</strong> the box for "Local File".</li>
+                <li>In the <strong>Input</strong> box, paste exactly: <code>srt://0.0.0.0:7654?mode=listener</code></li>
+                <li>In the <strong>Input Format</strong> box, type: <code>mpegts</code></li>
+                <li>Uncheck "Restart playback when source becomes active", and click OK.</li>
+            </ol>
+            
+            <!-- Replace the image source below with your actual image file -->
+            <!-- <img src="your-obs-image.jpg" alt="OBS Media Source Settings"> -->
+            <img src="/images/obs.png" alt="OBS Media Source Settings">
+
+            <h3>3. Connect the IRL Pro App</h3>
+            <ol>
+                <li>Open IRL Pro on your Android phone (ensure you are on your home WiFi).</li>
+                <li>Go to <strong>Settings</strong> > <strong>Connections</strong>.</li>
+                <li>Under <strong>SRT Setup</strong>, enter this URL: <code>srt://[YOUR_LOCAL_IP]:7654</code> (Replace [YOUR_LOCAL_IP] with the address from Step 1).</li>
+                <li>Save and go to the main camera screen. Your video should now appear in OBS!</li>
+            </ol>
+
+            <img src="/images/irlpro.png" alt="IRL Pro App Settings">
+        </div>
+
+        <!-- Phase 2 -->
+        <div class="card">
+            <h2>Phase 2: Mobile Streaming (Outside)</h2>
+            <p style="color: var(--text-muted);">To stream from outside your house using 4G/5G, you must allow the video feed through your home internet router.</p>
+
+            <div class="info-box">
+                <strong>Important:</strong> SRT uses the <strong>UDP</strong> protocol. Ensure you select UDP when setting up your port forwarding rules.
+            </div>
+
+            <h3>1. Port Forward on Your Router</h3>
+            <ol>
+                <li>Log into your router's admin settings using your web browser.</li>
+                <li>Find the <strong>Port Forwarding</strong> section.</li>
+                <li>Create a new rule: Forward Port <code>7654</code> using Protocol <strong>UDP</strong> to your OBS PC's Local IP address (from Phase 1).</li>
+                <li>Save and apply the router settings.</li>
+            </ol>
+            
+            <!-- Replace the image source below with your actual image file -->
+            <!-- <img src="your-router-image.jpg" alt="Router Port Forwarding Screen"> -->
+
+            <h3>2. Connect Using Your Public IP</h3>
+            <ol>
+                <li>On your OBS PC, visit a site like <code>whatismyip.com</code> to find your <strong>Public IPv4 Address</strong>.</li>
+                <li>Turn off WiFi on your phone so you are only using Mobile Data.</li>
+                <li>In the IRL Pro app's SRT Setup, change the URL to: <code>srt://[YOUR_PUBLIC_IP]:7654</code></li>
+                <li>Save settings. Your phone is now securely streaming via mobile data to your home PC.</li>
+            </ol>
+        </div>
+
+    </div>
+
+</body>
+</html>
