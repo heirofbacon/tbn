@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TTS Voices & Commands - The Bacon Network</title>
+    <link href="https://fonts.cdnfonts.com/css/hubot-sans" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/hubot-sans');
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+            scroll-behavior: smooth;
+        }
+
+        html, body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            font-family: Untitled Sans, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;
+            background: #05060f linear-gradient(0deg, rgba(216, 236, 248, .04), rgba(152, 192, 239, .04));
+            color: #d8ecf8;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        span, a, h1, h2, h3 {
+            font-family: 'Hubot-Sans', sans-serif;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem 1.5rem;
+            position: relative;
+            z-index: 100;
+        }
+
+        .header-left h2 {
+            font-size: 1rem;
+            margin: 0;
+            opacity: 0.7;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        .header-left h2:hover {
+            opacity: 1;
+            text-shadow: 0 2px 12px rgba(174, 207, 242, 0.6);
+        }
+
+        .header-left h2 a {
+            color: #bad6f7;
+            text-decoration: none;
+        }
+
+        .header-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .mid-spot {
+            width: 1.6rem;
+            height: 1.6rem;
+            border-radius: 50%;
+            background: black;
+            box-shadow: 0 0 1em 0 #98c0ef;
+        }
+
+        button.contact-btn {
+            position: relative;
+            width: 7.5rem;
+            height: 2.3rem;
+            cursor: pointer;
+            border-radius: 20em;
+            border: 1px solid #c2ccff33;
+            background: #121521;
+            color: #9dc3f7;
+            white-space: nowrap;
+            transition: background 0.5s, transform 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button.contact-btn::before {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 0;
+            border-radius: 20em;
+            width: 100%;
+            height: 100%;
+            background: #c2ccff91 radial-gradient(farthest-side at 50% 100%, #c2ccff, transparent);
+            opacity: 0.1;
+            transition: all 0.4s ease-in-out;
+        }
+
+        button.contact-btn:hover::before {
+            opacity: 0.3;
+        }
+
+        .contact-btn .glow {
+            --border-width: 1px;
+            --loop-cycle: 24s;
+            position: absolute;
+            inset: calc(var(--border-width)* -1);
+            border-radius: 50px;
+            border: var(--border-width) solid transparent;
+            -webkit-mask: linear-gradient(transparent, transparent), linear-gradient(white, white);
+            mask: linear-gradient(transparent, transparent), linear-gradient(white, white);
+            -webkit-mask-clip: padding-box, border-box;
+            mask-clip: padding-box, border-box;
+            -webkit-mask-composite: source-in, xor;
+            mask-composite: intersect;
+            pointer-events: none;
+        }
+
+        .contact-btn .glow::after,
+        .contact-btn .glow::before {
+            content: "";
+            height: 100%;
+            offset-anchor: 100% 50%;
+            background: radial-gradient(circle at 50% 50%, hsla(0, 0%, 100%, 0.75), transparent 50%), radial-gradient(circle at 50% 50%, #c2ccff 50%, transparent);
+            opacity: 0.4;
+            offset-path: rect(0 100% 100% 0 round 33px);
+            position: absolute;
+            display: inline-block;
+            animation: loop var(--loop-cycle) linear infinite;
+            aspect-ratio: 1 / 1;
+        }
+
+        .contact-btn .glow::before {
+            animation-delay: calc(var(--loop-cycle) / -2);
+        }
+
+        @keyframes loop {
+            100% { offset-distance: 100%; }
+        }
+
+        .contact-btn-content {
+            background: linear-gradient(0deg, #d8ecf8, #98c0ef);
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .header .spotlight {
+            pointer-events: none;
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .header .spotlight > div {
+            border-radius: 0 0 50% 50%;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: min(350px, 70vw);
+            height: 35rem;
+            background-image: conic-gradient(from 0deg at 50% -5%, transparent 45%, rgba(124, 145, 182, .25) 49%, rgba(124, 145, 182, .4) 50%, rgba(124, 145, 182, .25) 51%, transparent 55%);
+            transform-origin: 50% 0;
+            transform: translateX(-50%) rotateZ(0deg) scale(1);
+            filter: blur(15px);
+            opacity: 0.5;
+            animation: spotlightAnim 17s ease-in-out infinite;
+        }
+
+        .header .spotlight > div:nth-child(2) {
+            animation-delay: -5s;
+            opacity: 0.35;
+        }
+
+        .header .spotlight > div:nth-child(3) {
+            animation-delay: -10s;
+            opacity: 0.25;
+        }
+
+        @keyframes spotlightAnim {
+            0% { transform: translateX(-50%) rotateZ(0deg) scale(1); filter: blur(15px); opacity: 0.5; }
+            50% { transform: translateX(-50%) rotateZ(3deg) scale(1.1); filter: blur(14px); opacity: 0.6; }
+            100% { transform: translateX(-50%) rotateZ(0deg) scale(1); filter: blur(15px); opacity: 0.5; }
+        }
+
+        canvas#particleCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            pointer-events: none;
+            z-index: 1;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .accent-lines {
+            pointer-events: none;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            width: 100%; height: 100vh;
+            z-index: 0;
+            --accent-lines-clr: rgba(186, 215, 247, .06);
+        }
+
+        .accent-lines > div {
+            position: absolute;
+            top: 0; right: 0; left: 0;
+            width: 100%; height: 100%;
+        }
+
+        .accent-lines > div:nth-child(1) > div {
+            position: absolute;
+            width: 100%; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-lines-clr), transparent);
+        }
+        .accent-lines > div:nth-child(1) > div:nth-child(1) { top: 10vh; }
+        .accent-lines > div:nth-child(1) > div:nth-child(2) { top: 35vh; }
+        .accent-lines > div:nth-child(1) > div:nth-child(3) { top: 70vh; }
+
+        .dashboard-container {
+            position: relative;
+            z-index: 10;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.25rem 5rem 1.25rem;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-title {
+            font-size: 2.75rem;
+            font-weight: 600;
+            margin: 0 0 0.4rem 0;
+            background: linear-gradient(0deg, #d8ecf8 0, #98c0ef 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 16px rgba(174, 207, 242, .2);
+        }
+
+        .dashboard-subtitle {
+            color: #94a3b8;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 0.85rem 1.15rem;
+            font-size: 0.95rem;
+            font-family: 'Hubot-Sans', sans-serif;
+            background-color: #121521;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            color: #f8fafc;
+            outline: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .search-box:focus {
+            border-color: #98c0ef;
+            box-shadow: 0 0 15px rgba(152, 192, 239, 0.2);
+        }
+
+        .voice-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.6rem;
+        }
+
+        @media (max-width: 720px) {
+            .voice-list {
+                grid-template-columns: 1fr;
+            }
+            .dashboard-title {
+                font-size: 2.2rem;
+            }
+        }
+
+        .voice-row {
+            background: rgba(18, 21, 33, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(194, 204, 255, 0.1);
+            border-radius: 10px;
+            padding: 0.65rem 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+        }
+
+        .voice-row:hover {
+            border-color: rgba(152, 192, 239, 0.35);
+            background: rgba(24, 28, 46, 0.9);
+            transform: translateY(-1px);
+        }
+
+        .voice-name {
+            font-weight: 500;
+            font-size: 0.92rem;
+            color: #d8ecf8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding-right: 0.5rem;
+        }
+
+        .voice-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .voice-cmd {
+            font-family: monospace;
+            background-color: #05060f;
+            color: #38bdf8;
+            padding: 0.25rem 0.55rem;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            border: 1px solid rgba(56, 189, 248, 0.18);
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 0.3rem;
+            border-radius: 6px;
+            transition: color 0.2s, background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .copy-btn:hover {
+            color: #d8ecf8;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #94a3b8;
+            padding: 3rem;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-left">
+            <h2><a href="#" rel="noopener noreferrer">Bacon Toolkit</a></h2>
+        </div>
+        <div class="header-center">
+            <div class="mid-spot"></div>
+        </div>
+        <div class="header-right">
+            <a href="https://linktr.ee/theheirofbacon" target="_blank" rel="noopener noreferrer">
+              <button class="contact-btn">
+                <span class="glow"></span>
+                <span class="contact-btn-content">Donate</span>
+              </button>
+            </a>
+        </div>
+        <div class="spotlight">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+    </div>
+
+    <canvas id="particleCanvas"></canvas>
+
+    <div class="accent-lines">
+        <div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="hero-section">
+            <h1 class="dashboard-title">TTS VOICES</h1>
+            <p class="dashboard-subtitle">Complete list of available text-to-speech voice commands</p>
+        </div>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-box" placeholder="Search by voice name or command (e.g. !trump, batman)..." onkeyup="filterVoices()" aria-label="Search voices">
+        </div>
+
+        <div class="voice-list" id="voiceGrid">
+            <!-- Dynamic Voice Rows injected via JS -->
+        </div>
+    </div>
+
+    <script>
+        const voices = [
+            {name: "50 Cent", cmd: "!fifty"},
+            {name: "Ac7ionMan", cmd: "!ac7"},
+            {name: "Albert Einstein", cmd: "!einstein"},
+            {name: "Alex Jones", cmd: "!alex"},
+            {name: "Alyb0ba", cmd: "!aly"},
+            {name: "Andrew Tate", cmd: "!tate"},
+            {name: "Baked Alaska", cmd: "!baked"},
+            {name: "Barack Obama", cmd: "!obama"},
+            {name: "Bart Simpson", cmd: "!bart"},
+            {name: "Batman", cmd: "!batman"},
+            {name: "Beavis", cmd: "!beavis"},
+            {name: "beavis2", cmd: "!beavis2"},
+            {name: "Blade", cmd: "!blade"},
+            {name: "Butthead", cmd: "!butthead"},
+            {name: "Cartman", cmd: "!cartman"},
+            {name: "Chris Griffin", cmd: "!chris"},
+            {name: "Chud The Builder", cmd: "!chud"},
+            {name: "CrackyJoe", cmd: "!joe"},
+            {name: "Darth Vader", cmd: "!vader"},
+            {name: "Dexter Morgan", cmd: "!dexter"},
+            {name: "DMX", cmd: "!dmx"},
+            {name: "Donald Trump", cmd: "!trump"},
+            {name: "Dr. Phil", cmd: "!phil"},
+            {name: "Echosbeast", cmd: "!echosbeast"},
+            {name: "egirl", cmd: "!egirl"},
+            {name: "Elmo", cmd: "!elmo"},
+            {name: "Elon Musk", cmd: "!musk"},
+            {name: "God", cmd: "!god"},
+            {name: "Hank Hill", cmd: "!hank"},
+            {name: "Horror Announcer", cmd: "!horror"},
+            {name: "Hulk Hogan", cmd: "!hogan"},
+            {name: "Ice Cube", cmd: "!icecube"},
+            {name: "Ice Poseidon", cmd: "!ice"},
+            {name: "Italian Mafia", cmd: "!mafia"},
+            {name: "JARVIS", cmd: "!jarvis"},
+            {name: "Jeremy Clarkson", cmd: "!clarkson"},
+            {name: "Joe Rogan", cmd: "!rogan"},
+            {name: "Joker", cmd: "!joker"},
+            {name: "Kick Clipz", cmd: "!clipz"},
+            {name: "Kyle Broflovski (Southpark)", cmd: "!kyle"},
+            {name: "Marcel", cmd: "!marcel"},
+            {name: "Meatwad", cmd: "!meatwad"},
+            {name: "Michael Jackson", cmd: "!mj"},
+            {name: "Mickey Mouse", cmd: "!mickey"},
+            {name: "Morgan Freeman", cmd: "!freeman"},
+            {name: "Mortal Combat Announcer", cmd: "!mc"},
+            {name: "Morty", cmd: "!morty"},
+            {name: "Nick Lee", cmd: "!nicklee"},
+            {name: "Nick White", cmd: "!nickwhite"},
+            {name: "Norm Macdonald", cmd: "!norm"},
+            {name: "Old Man", cmd: "!oldman"},
+            {name: "Patrick Star", cmd: "!patrick"},
+            {name: "Peter Griffin", cmd: "!peter"},
+            {name: "phant0mshock", cmd: "!phantom"},
+            {name: "RFK", cmd: "!rfk"},
+            {name: "Rick (Rick and Morty)", cmd: "!rick"},
+            {name: "Rocko (Rocko's Modern Life)", cmd: "!rocko"},
+            {name: "Sam Pepper", cmd: "!sam"},
+            {name: "Slax", cmd: "!slax"},
+            {name: "Snoop Dogg", cmd: "!snoop"},
+            {name: "Speed", cmd: "!speed"},
+            {name: "SpongeBob", cmd: "!spongebob"},
+            {name: "Super Smash Bros. 4/Ultimate Announcer", cmd: "!ssb"},
+            {name: "Suspendas", cmd: "!sus"},
+            {name: "Suzie Smalls", cmd: "!suzie"},
+            {name: "Vagabond", cmd: "!vagabond"},
+            {name: "whiz", cmd: "!whiz"},
+            {name: "Wvagabond #2", cmd: "!vagabond2"},
+            {name: "xqc", cmd: "!xqc"},
+            {name: "apples5", cmd: "!apples5"},
+            {name: "Bam Margera", cmd: "!bam"},
+            {name: "Cristorata", cmd: "!cristorata"},
+            {name: "Duck", cmd: "!duck"},
+            {name: "eddie", cmd: "!eddie"},
+            {name: "endure", cmd: "!endure"},
+            {name: "iDuncle", cmd: "!duncle"},
+            {name: "Indian Scammer", cmd: "!indian"},
+            {name: "James Worley", cmd: "!jamesworley"},
+            {name: "KitKat2727", cmd: "!kit"},
+            {name: "Lake Show", cmd: "!lake"},
+            {name: "MAGGOT", cmd: "!maggot"},
+            {name: "Maki95", cmd: "!maki"},
+            {name: "matthew selby", cmd: "!matthew"},
+            {name: "Santa Maria", cmd: "!santamaria"},
+            {name: "Sayge", cmd: "!sayge"},
+            {name: "Tokyo Trump", cmd: "!tokyo"},
+            {name: "Twitch's CEO Dan Clancy", cmd: "!danclancy"},
+            {name: "duhsten", cmd: "!duhsten"},
+            {name: "Burger Planet", cmd: "!burger"},
+            {name: "NedX", cmd: "!ned"},
+            {name: "Kang Joel", cmd: "!joel"},
+            {name: "Freddy Krueger", cmd: "!freddy"},
+            {name: "Ghostface", cmd: "!ghostface"},
+            {name: "Pennywise", cmd: "!pennywise"},
+            {name: "Jigsaw", cmd: "!jigsaw"},
+            {name: "Chucky", cmd: "!chucky"},
+            {name: "Springtrap", cmd: "!springtrap"},
+            {name: "M3GAN", cmd: "!m3gan"},
+            {name: "Vecna", cmd: "!vecna"},
+            {name: "Pinhead", cmd: "!pinhead"},
+            {name: "Crypt Keeper", cmd: "!cryptkeeper"},
+            {name: "Tiffany", cmd: "!tiffany"},
+            {name: "Slappy", cmd: "!slappy"},
+            {name: "Freddy Fazbear", cmd: "!fazbear"},
+            {name: "Nightmare Freddy", cmd: "!nightmare"},
+            {name: "Sonic", cmd: "!sonic"},
+            {name: "Jax", cmd: "!jax"},
+            {name: "Metal Sonic", cmd: "!metalsonic"},
+            {name: "Baldi", cmd: "!baldi"},
+            {name: "Pomni", cmd: "!pomni"}
+        ];
+
+        const grid = document.getElementById('voiceGrid');
+
+        function renderVoices(list) {
+            grid.innerHTML = '';
+            if (list.length === 0) {
+                grid.innerHTML = '<div class="no-results">No matching voices found.</div>';
+                return;
+            }
+            list.forEach(v => {
+                const row = document.createElement('div');
+                row.className = 'voice-row';
+                row.innerHTML = `
+                    <div class="voice-name" title="${v.name}">${v.name}</div>
+                    <div class="voice-right">
+                        <span class="voice-cmd">${v.cmd}</span>
+                        <button class="copy-btn" title="Copy command" onclick="copyCommand('${v.cmd}', this)"><i class="fas fa-copy"></i></button>
+                    </div>
+                `;
+                grid.appendChild(row);
+            });
+        }
+
+        function filterVoices() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = voices.filter(v => 
+                v.name.toLowerCase().includes(query) || v.cmd.toLowerCase().includes(query)
+            );
+            renderVoices(filtered);
+        }
+
+        function copyCommand(text, btn) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                const icon = btn.querySelector('i');
+                icon.className = 'fas fa-check';
+                setTimeout(() => {
+                    icon.className = 'fas fa-copy';
+                }, 1500);
+            } catch (err) {
+                console.error('Failed to copy text', err);
+            }
+            document.body.removeChild(textArea);
+        }
+
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particles = [];
+        let particleCount = Math.floor((canvas.width * canvas.height) / 7000);
+
+        class Particle {
+            constructor() {
+                this.reset();
+                this.y = Math.random() * canvas.height;
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.speed = Math.random() / 5 + 0.1;
+                this.opacity = 1;
+                this.fadeDelay = Math.random() * 600 + 100;
+                this.fadeStart = Date.now() + this.fadeDelay;
+                this.fadingOut = false;
+            }
+            update() {
+                this.y -= this.speed;
+                if (this.y < 0) this.reset();
+                if (!this.fadingOut && Date.now() > this.fadeStart) this.fadingOut = true;
+                if (this.fadingOut) {
+                    this.opacity -= 0.008;
+                    if (this.opacity <= 0) this.reset();
+                }
+            }
+            draw() {
+                ctx.fillStyle = `rgba(${255 - (Math.random() * 128)}, 255, 255, ${this.opacity})`;
+                ctx.fillRect(this.x, this.y, 0.4, Math.random() * 2 + 1);
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particleCount = Math.floor((canvas.width * canvas.height) / 7000);
+            initParticles();
+        });
+
+        // Initial render & animation start
+        renderVoices(voices);
+        initParticles();
+        animate();
+    </script>
+</body>
+</html>
