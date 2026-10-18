@@ -366,8 +366,8 @@ async function executeDexSearch(presetUsername = null, { silent = false } = {}) 
         let roster;
         try { roster = typeof trainer.roster === 'string' ? JSON.parse(trainer.roster) : trainer.roster; } catch { roster = null; }
         if (!Array.isArray(roster)) throw Error('This collection could not be loaded. Please try again.');
-        currentPokedexRoster = roster.filter(p => p && p.internalId != null).map(p => ({
-            ...p, level: Math.max(1, Math.min(100, Math.floor(dexNumber(p.level, 1)))), xp: Math.max(0, dexNumber(p.xp))
+        currentPokedexRoster = roster.filter(p => p && p.internalId != null).map((p, index) => ({
+            ...p, selectionNumber: index + 1, level: Math.max(1, Math.min(100, Math.floor(dexNumber(p.level, 1)))), xp: Math.max(0, dexNumber(p.xp))
         }));
         if (!currentPokedexRoster.some(p => p.active) && currentPokedexRoster.length) {
             const dates = currentPokedexRoster.map(p => Date.parse(p.caughtAt));
@@ -448,9 +448,7 @@ function renderPokedex() {
         const ivKeys = [['HP','hp'],['ATK','atk'],['DEF','def'],['SP. ATK','spAtk'],['SP. DEF','spDef'],['SPEED','speed']];
         const iv = key => Math.max(0, Math.min(31, Math.floor(dexNumber(p.ivs?.[key]))));
         const total = ivKeys.reduce((sum, [, key]) => sum + iv(key), 0);
-        const uniqueSpecies = currentPokedexRoster.filter(other => other.internalId === p.internalId).length === 1;
-        const selector = p.id || (uniqueSpecies ? p.internalId : '');
-        const command = selector ? '!pokemon ' + selector : '';
+        const command = '!poke ' + p.selectionNumber;
         const evolution = p.evolution, choices = evolution?.choices || [];
         const evolutionText = choices.length ? 'Evolves ' + (evolution.ready ? 'now' : 'at Lv' + evolution.level) + ': ' + choices.map(c => c.name).join(' / ') : '';
         const evolutionButtons = p.active && evolution?.ready && choices.length > 1 ? choices.map(c => '<button type="button" class="dex-evolve" data-dex-copy="' + dexEscape('!evolve ' + c.internalId) + '">Copy evolve ' + dexEscape(c.name) + '</button>').join('') : '';
@@ -460,7 +458,7 @@ function renderPokedex() {
             '<h3>' + dexEscape(p.name || 'Unknown') + '</h3><p class="dex-card-level">Level ' + p.level + '</p>' + dexXpMarkup(p) +
             (evolutionText ? '<p class="dex-evolution">' + dexEscape(evolutionText) + '</p>' + evolutionButtons : '') +
             '<details class="dex-ivs"><summary>Individual values <strong>' + total + ' / 186</strong></summary><div class="dex-iv-grid">' + ivKeys.map(([label,key]) => '<div><span>' + label + '</span><strong' + (iv(key) === 31 ? ' class="dex-perfect"' : '') + '>' + iv(key) + '/31</strong></div>').join('') + '</div></details>' +
-            '<button type="button" class="dex-select" ' + (p.active || !command ? 'disabled' : 'data-dex-copy="' + dexEscape(command) + '"') + '>' + (p.active ? 'Current partner' : command ? 'Copy selection command' : 'Chat, then refresh to select') + '</button>' +
+            '<button type="button" class="dex-select" ' + (p.active || !command ? 'disabled' : 'data-dex-copy="' + dexEscape(command) + '"') + '>' + (p.active ? 'Current partner' : command ? 'Copy ' + command : 'Chat, then refresh to select') + '</button>' +
             (command ? '<details class="dex-command"><summary>View chat command</summary><code>' + dexEscape(command) + '</code></details>' : '') + '</article>';
     }).join('');
 }
@@ -485,8 +483,8 @@ function renderDexBoss(world) {
     const phase = dexBoss.phase, bossName = dexBoss.pokemon?.nameEn || 'Boss';
     let hint = '', command = '';
     if (phase === 'lobby') { hint = joined ? 'This trainer joined with their selected partner.' : 'Choose your partner, then join in stream chat.'; command = joined ? '' : '!joinboss'; }
-    else if (phase === 'catching') { hint = joined ? 'Victory! Battle participants can make one catch attempt.' : 'Defeated! Only trainers who joined this battle can try to catch it.'; if (participant?.attempted || participant?.caught) hint = participant.caught ? 'This trainer caught the boss!' : 'This trainer has used their one catch attempt.';
-        command = joined && !participant.attempted && !participant.caught ? '!bosscatch' : ''; }
+    else if (phase === 'catching') { hint = joined ? 'Victory! Participants can use normal catch rules and retry failed throws before the boss flees.' : 'Defeated! Only trainers who joined this battle can try to catch it.'; if (participant?.caught) hint = 'This trainer caught the boss!';
+        command = joined && !participant.caught ? '!bosscatch' : ''; }
     else { hint = 'The battle runs automatically. ' + (joined ? 'This trainer is in the fight.' : 'Join the next lobby to take part.'); }
     banner.innerHTML = '<div><span class="dex-eyebrow">Boss ' + dexEscape(phase) + ' <span id="dex-boss-clock"></span></span><h3>' + dexEscape(bossName) + ' <small>Lv' + dexNumber(dexBoss.level, 1) + '</small></h3><p>' + dexEscape(hint) + '</p></div>' + (command ? '<button type="button" data-dex-copy="' + command + '">' + (command === '!joinboss' ? 'Copy join command' : 'Copy catch command') + '</button>' : '');
     banner.hidden = false; updateDexBossClock();
