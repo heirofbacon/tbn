@@ -12,7 +12,8 @@ let activeTool = 'home'; // Track the current tool for the Easter Eggs
 let lbData = []; // Store leaderboard data globally
 let dexData = []; // Store pokedex data globally
 
-function loadTool(target) {
+function loadTool(target, updateHistory = true) {
+    if (target !== 'pokedex') stopPokedexRefresh();
     activeTool = target; 
     
     // FIX: Moved inside function so it never returns null and crashes the app
@@ -46,10 +47,15 @@ function loadTool(target) {
         }
         if (target === 'pokedex') fetchPokedex();
 
-        if (target === 'home') {
+        if (updateHistory && target === 'home') {
             window.history.pushState({}, '', window.location.pathname);
-        } else {
-            window.history.pushState({}, '', '?page=' + target);
+        } else if (updateHistory) {
+            const next = new URL(window.location.href);
+            const trainer = target === 'pokedex' ? next.searchParams.get('u') : null;
+            next.search = ''; next.hash = '';
+            next.searchParams.set('page', target);
+            if (trainer) next.searchParams.set('u', trainer);
+            if (next.href !== window.location.href) window.history.pushState({}, '', next);
         }
     } 
     // Handle Dynamic Tool Routes (Fetching the overlay editors)
@@ -59,7 +65,7 @@ function loadTool(target) {
             tC.classList.remove('hidden');
             tC.innerHTML = '<div class="flex justify-center items-center h-64"><i class="fas fa-spinner fa-spin text-4xl text-emerald-500"></i></div>';
         }
-        window.history.pushState({}, '', '?tool=' + target);
+        if (updateHistory) window.history.pushState({}, '', '?tool=' + target);
         
         fetch(`./tools/${target}/editor.html`)
             .then(r => {
@@ -98,12 +104,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const initialPage = urlParams.get('page');
 
     if (initialTool) {
-        loadTool(initialTool);
+        loadTool(initialTool, false);
     } else if (initialPage && ['commands', 'guide', 'leaderboard', 'pokedex', 'baconsuite'].includes(initialPage)) {
-        loadTool(initialPage);
+        loadTool(initialPage, false);
     } else {
-        loadTool('home'); // Default load
+        loadTool('home', false); // Default load
     }
+
+    window.addEventListener('popstate', () => {
+        const params = new URLSearchParams(window.location.search);
+        loadTool(params.get('tool') || params.get('page') || 'home', false);
+    });
 
     // Tada Animation Logic for Support Buttons
     const supportBtns = document.querySelectorAll('.support-btn-anim');
@@ -236,242 +247,259 @@ function renderLeaderboard() {
 // ==========================================
 // REAL DATA: POKEDEX LOGIC
 // ==========================================
+// Public trainer collections. Selection and battles remain authenticated through stream chat.
 let currentPokedexRoster = [];
+let currentDexTrainer = null;
 let recentViewedTrainers = [];
-
+let dexRequest = null, dexRequestId = 0, dexReady = false, dexBoss = null;
+const dexEscape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const dexGet = id => document.getElementById(id);
+const dexNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+function dexUsername(value) { return String(value || '').trim().replace(/^@/, '').toLowerCase(); }
+function dexTrainerUrl(username) {
+    const url = new URL(window.location.href);
+    url.search = ''; url.hash = '';
+    url.searchParams.set('page', 'pokedex');
+    url.searchParams.set('u', username);
+    return url;
+}
+function stopPokedexRefresh() {
+    dexRequestId++;
+    dexRequest?.abort();
+    dexRequest = null;
+}
 function setupPokedexUI() {
-    const container = document.getElementById('dex-content');
-    const notice = document.getElementById('dex-notice');
-    if (!container || !notice) return;
-
-    // Build the structural layout if it doesn't already exist
-    if (!document.getElementById('dex-layout-wrapper')) {
-        const dexContainer = document.querySelector('#pokedex-container > div:first-child');
-        if (dexContainer) {
-            // Expand width to make room for the sidebar
-            dexContainer.classList.remove('max-w-6xl');
-            dexContainer.classList.add('max-w-8xl');
-
-            const wrapper = document.createElement('div');
-            wrapper.id = 'dex-layout-wrapper';
-            wrapper.className = 'grid grid-cols-1 lg:grid-cols-4 gap-8 items-start mt-2';
-            
-            const mainCol = document.createElement('div');
-            mainCol.className = 'lg:col-span-3 w-full';
-            
-            mainCol.innerHTML = `
-                <div id="pokedex-search-bar" class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 mb-6 shadow-lg flex flex-col xl:flex-row gap-4 items-center justify-between">
-                    <div class="flex-1 w-full">
-                        <h3 class="text-white font-bold text-lg mb-1">Trainer Search</h3>
-                        <p class="text-xs text-zinc-400">Enter a username to view their captured Pokémon.</p>
-                    </div>
-                    <div class="flex flex-wrap sm:flex-nowrap gap-2 w-full xl:w-auto">
-                        <select id="dex-sort" onchange="renderPokedex()" class="hidden bg-black border border-zinc-800 focus:border-red-500 outline-none px-3 py-3 rounded-xl text-sm text-zinc-300 w-full sm:w-auto transition-colors cursor-pointer">
-                            <option value="level">Level (High-Low)</option>
-                            <option value="number">Dex Number</option>
-                            <option value="name">Name (A-Z)</option>
-                            <option value="shiny">Shiny First</option>
-                        </select>
-                        <input type="text" id="dex-search-input" class="flex-1 sm:flex-none bg-black border border-zinc-800 focus:border-red-500 outline-none px-4 py-3 rounded-xl text-sm text-white w-full sm:w-64 transition-colors" placeholder="e.g. heirofbacon" onkeypress="if(event.key === 'Enter') executeDexSearch()">
-                        <button onclick="executeDexSearch()" class="bg-red-600 hover:bg-red-500 text-white font-bold px-5 py-3 rounded-xl transition-colors shadow-[0_0_15px_rgba(220,38,38,0.3)] shrink-0"><i class="fas fa-search"></i></button>
-                    </div>
-                </div>
-                
-                <div id="dex-stats-bar" class="hidden grid grid-cols-3 gap-4 mb-6 bg-zinc-900/50 p-4 rounded-xl border border-zinc-800">
-                    <div class="text-center"><div class="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-1">Pokéballs</div><div id="stat-dex-balls" class="text-2xl font-black text-brand font-mono">0</div></div>
-                    <div class="text-center border-x border-zinc-800"><div class="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-1">Unique</div><div id="stat-dex-unique" class="text-2xl font-black text-blue-400 font-mono">0</div></div>
-                    <div class="text-center"><div class="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-1">Shinies</div><div id="stat-dex-shiny" class="text-2xl font-black text-yellow-400 font-mono">0</div></div>
-                </div>
-                
-                <div id="dex-error" class="hidden bg-red-900/20 border border-red-500/50 text-red-400 p-4 rounded-xl mb-4 text-sm font-bold flex flex-col items-center justify-center gap-2 text-center shadow-lg"></div>
-            `;
-            
-            // Move the actual grid into the main column
-            mainCol.appendChild(container);
-            
-            const sideCol = document.createElement('div');
-            sideCol.className = 'lg:col-span-1 w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-5 shadow-xl lg:sticky lg:top-8';
-            sideCol.innerHTML = `
-                <h3 class="text-base font-bold text-white mb-2 flex items-center gap-2"><i class="fas fa-history text-blue-500"></i> Recently Viewed</h3>
-                <p class="text-xs text-zinc-400 mb-4 pb-4 border-b border-zinc-800">Quickly access recent trainers.</p>
-                <div id="dex-recent-list" class="flex flex-col gap-2">
-                    <div class="text-center text-zinc-500 text-xs italic py-4">No recent searches</div>
-                </div>
-            `;
-
-            wrapper.appendChild(mainCol);
-            wrapper.appendChild(sideCol);
-            
-            // Hide the old generic notice div to prevent layout breakage
-            notice.style.display = 'none';
-            
-            dexContainer.appendChild(wrapper);
+    if (dexReady || !dexGet('dex-search-form')) return;
+    dexReady = true;
+    try {
+        const saved = JSON.parse(localStorage.getItem('bacon-pokedex-recent') || '[]');
+        recentViewedTrainers = Array.isArray(saved) ? saved.filter(u => typeof u === 'string' && u.length > 0 && u.length <= 80).slice(0, 8) : [];
+    } catch {}
+    renderRecentViewed();
+    dexGet('dex-search-form').addEventListener('submit', event => { event.preventDefault(); executeDexSearch(); });
+    for (const id of ['dex-filter', 'dex-sort']) dexGet(id).addEventListener('change', renderPokedex);
+    dexGet('dex-pokemon-search').addEventListener('input', renderPokedex);
+    dexGet('dex-refresh').addEventListener('click', () => executeDexSearch());
+    dexGet('dex-share').addEventListener('click', () => {
+        if (currentDexTrainer) copyDexText(dexTrainerUrl(currentDexTrainer.username).href, 'Trainer link copied.');
+    });
+    dexGet('pokedex-container').addEventListener('click', event => {
+        const copy = event.target.closest('[data-dex-copy]');
+        if (copy && !copy.disabled) copyDexText(copy.dataset.dexCopy, 'Command copied. Paste it into the stream chat.');
+        const recent = event.target.closest('[data-dex-trainer]');
+        if (recent) executeDexSearch(recent.dataset.dexTrainer);
+    });
+    dexGet('dex-content').addEventListener('error', event => {
+        const img = event.target;
+        if (img.tagName !== 'IMG') return;
+        if (!img.dataset.fallback) {
+            img.dataset.fallback = 'true';
+            img.src = getApiUrl('/assets/sprites/normal/0.png');
+        } else {
+            img.hidden = true;
+            img.parentElement.classList.add('dex-missing-sprite');
         }
+    }, true);
+    setInterval(() => {
+        if (activeTool === 'pokedex' && !document.hidden && currentDexTrainer && !dexRequest) {
+            executeDexSearch(currentDexTrainer.username, { silent: true });
+        }
+    }, 30000);
+    setInterval(updateDexBossClock, 1000);
+}
+async function copyDexText(value, message) {
+    const manual = dexGet('dex-copy-value');
+    manual.hidden = true;
+    try {
+        await navigator.clipboard.writeText(value);
+        dexGet('dex-copy-status').textContent = message;
+    } catch {
+        manual.value = value; manual.hidden = false; manual.focus(); manual.select();
+        dexGet('dex-copy-status').textContent = 'Copy the selected text below, then paste it into chat or share it.';
     }
 }
-
 async function fetchPokedex() {
     setupPokedexUI();
-    const input = document.getElementById('dex-search-input');
-    
-    // If there is already text in the box, the sync button refreshes that user
-    if (input && input.value.trim() !== '') {
-        executeDexSearch();
-    } else {
-        // Otherwise, show the default empty state
-        const container = document.getElementById('dex-content');
-        if (container) container.innerHTML = '<div class="col-span-full text-center text-zinc-500 py-12 bg-zinc-900 border border-zinc-800 rounded-2xl">Use the search bar above to look up a Trainer\'s Pokédex.</div>';
-        document.getElementById('dex-stats-bar')?.classList.add('hidden');
-        document.getElementById('dex-error')?.classList.add('hidden');
-        document.getElementById('dex-sort')?.classList.add('hidden');
-    }
+    const username = new URLSearchParams(window.location.search).get('u');
+    dexGet('dex-search-input').value = username || '';
+    if (username) return executeDexSearch(username);
+    stopPokedexRefresh();
+    currentDexTrainer = null; currentPokedexRoster = [];
+    dexGet('dex-trainer-name').textContent = 'Your collection starts here';
+    dexGet('dex-stats-bar').hidden = true; dexGet('dex-active').hidden = true;
+    dexGet('dex-toolbar').hidden = true; dexGet('dex-share').hidden = true; dexGet('dex-boss').hidden = true;
+    dexGet('dex-error').hidden = true;
+    dexGet('dex-content').innerHTML = '<div class="dex-empty"><span class="dex-empty-mark" aria-hidden="true">&#9678;</span><h3>Find a trainer</h3><p>Enter your stream username to see every catch, check your partner, and choose who joins you on screen.</p></div>';
+    dexGet('dex-result-count').textContent = ''; dexGet('dex-updated').textContent = '';
+    dexGet('dex-content').setAttribute('aria-busy', 'false');
 }
-
-window.executeDexSearch = async function(presetUsername = null) {
-    const input = document.getElementById('dex-search-input');
-    const container = document.getElementById('dex-content');
-    const errorBox = document.getElementById('dex-error');
-    const statsBar = document.getElementById('dex-stats-bar');
-    const sortDropdown = document.getElementById('dex-sort');
-    
-    const username = presetUsername || input?.value.trim();
-    if (!username) return;
-
-    if (input && presetUsername) input.value = presetUsername;
-
-    container.innerHTML = '<div class="col-span-full flex justify-center py-12"><i class="fas fa-spinner fa-spin text-4xl text-red-500"></i></div>';
-    if (errorBox) errorBox.classList.add('hidden');
-    if (statsBar) statsBar.classList.add('hidden');
-    if (sortDropdown) sortDropdown.classList.add('hidden');
-
-    try {
-        const res = await fetch(getApiUrl(`/api/pokedex/${encodeURIComponent(username)}`));
-        if (res.status === 404) {
-            throw new Error(`Trainer '${username}' has not caught any Pokémon yet.`);
-        }
-        if (!res.ok) throw new Error(`API Offline (Status: ${res.status})`);
-        
-        const trainer = await res.json();
-        
-        // Update Stats
-        if (statsBar) {
-            document.getElementById('stat-dex-balls').innerText = trainer.pokeballs || 0;
-            document.getElementById('stat-dex-unique').innerText = trainer.pokedexCount || 0;
-            document.getElementById('stat-dex-shiny').innerText = trainer.shinyCount || 0;
-            statsBar.classList.remove('hidden');
-        }
-
-        let roster = [];
-        try { roster = JSON.parse(trainer.roster || '[]'); } catch(e) {}
-        
-        // Save state for sorting algorithms and recent views
-        currentPokedexRoster = roster;
-        addToRecentViewed(trainer.username);
-
-        if (roster.length > 0 && sortDropdown) {
-            sortDropdown.classList.remove('hidden');
-        }
-
-        renderPokedex();
-    } catch (err) {
-        console.error("Pokedex Search Error:", err);
-        if (errorBox) {
-            errorBox.innerHTML = `<div class="flex items-center gap-2"><i class="fas fa-exclamation-triangle text-xl"></i> Search Failed</div><span class="text-xs opacity-80 mt-1">${err.message}</span>`;
-            errorBox.classList.remove('hidden');
-        }
-        container.innerHTML = '';
-    }
-};
-
-function renderPokedex() {
-    const container = document.getElementById('dex-content');
-    if (!container) return;
-
-    // Create a copy of the roster so sorting doesn't permanently disrupt the source
-    let roster = [...currentPokedexRoster];
-
-    if (!roster || roster.length === 0) {
-        container.innerHTML = '<div class="col-span-full text-center text-zinc-500 py-12 bg-zinc-900 border border-zinc-800 rounded-2xl">This trainer has no Pokémon in their active roster.</div>';
+async function executeDexSearch(presetUsername = null, { silent = false } = {}) {
+    setupPokedexUI();
+    const username = dexUsername(presetUsername || dexGet('dex-search-input').value);
+    if (!username || username.length > 80) {
+        dexGet('dex-error').textContent = 'Enter a trainer username (up to 80 characters).';
+        dexGet('dex-error').hidden = false;
         return;
     }
-
-    const sortMode = document.getElementById('dex-sort')?.value || 'level';
-
-    roster.sort((a, b) => {
-        if (sortMode === 'level') return (b.level || 0) - (a.level || 0);
-        if (sortMode === 'number') return (a.internalId || 0) - (b.internalId || 0);
-        if (sortMode === 'name') return (a.name || '').localeCompare(b.name || '');
-        if (sortMode === 'shiny') return (b.isShiny === true ? 1 : 0) - (a.isShiny === true ? 1 : 0);
-        return 0;
-    });
-
-    container.innerHTML = roster.map(pk => {
-        const folder = pk.isShiny ? 'shiny' : 'normal';
-        const spriteUrl = getApiUrl(`/assets/sprites/${folder}/${pk.internalId}.png`);
-        
-        // Colors IVs green if perfect 31
-        const checkIV = (val) => val === 31 ? 'text-emerald-400 drop-shadow-[0_0_5px_rgba(16,185,129,0.8)]' : 'text-white';
-
-        return `
-        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex flex-col hover:border-red-500/50 transition-colors group shadow-lg relative">
-            ${pk.isShiny ? '<div class="absolute top-2 right-2 text-xl drop-shadow-[0_0_5px_gold]">✨</div>' : ''}
-            ${pk.locked ? '<div class="absolute top-2 left-2 text-sm">🔒</div>' : ''}
-            
-            <div class="w-full h-24 mb-2 flex items-center justify-center">
-                <img src="${spriteUrl}" class="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform drop-shadow-[0_4px_6px_rgba(0,0,0,0.5)]" onerror="this.onerror=null; this.src=getApiUrl('/assets/sprites/normal/0.png');">
-            </div>
-
-            <h4 class="font-bold text-lg text-center truncate w-full capitalize text-red-400">${pk.name || 'Unknown'}</h4>
-            <div class="text-[11px] font-bold text-zinc-500 uppercase tracking-widest text-center mb-3">Level ${pk.level || 1}</div>
-
-            <div class="grid grid-cols-2 gap-x-3 gap-y-1 text-[9px] bg-black p-2.5 rounded-lg border border-zinc-800 mt-auto">
-                <div class="flex justify-between items-center"><span class="text-zinc-600 font-bold">HP</span> <span class="font-bold ${checkIV(pk.ivs?.hp)}">${pk.ivs?.hp || 0}/31</span></div>
-                <div class="flex justify-between items-center"><span class="text-zinc-600 font-bold">ATK</span> <span class="font-bold ${checkIV(pk.ivs?.atk)}">${pk.ivs?.atk || 0}/31</span></div>
-                <div class="flex justify-between items-center"><span class="text-zinc-600 font-bold">DEF</span> <span class="font-bold ${checkIV(pk.ivs?.def)}">${pk.ivs?.def || 0}/31</span></div>
-                <div class="flex justify-between items-center"><span class="text-zinc-600 font-bold">SP.A</span> <span class="font-bold ${checkIV(pk.ivs?.spAtk)}">${pk.ivs?.spAtk || 0}/31</span></div>
-                <div class="flex justify-between items-center"><span class="text-zinc-600 font-bold">SP.D</span> <span class="font-bold ${checkIV(pk.ivs?.spDef)}">${pk.ivs?.spDef || 0}/31</span></div>
-                <div class="flex justify-between items-center"><span class="text-zinc-600 font-bold">SPD</span> <span class="font-bold ${checkIV(pk.ivs?.speed)}">${pk.ivs?.speed || 0}/31</span></div>
-            </div>
-        </div>
-    `}).join('');
-}
-
-function addToRecentViewed(username) {
-    username = username.toLowerCase();
-    // Filter out if it already exists so we can push it to the absolute top
-    recentViewedTrainers = recentViewedTrainers.filter(u => u !== username);
-    recentViewedTrainers.unshift(username);
-    
-    // Keep max memory footprint limited to 10
-    if (recentViewedTrainers.length > 10) {
-        recentViewedTrainers.pop();
+    if (!silent) dexGet('dex-search-input').value = username;
+    stopPokedexRefresh();
+    const requestId = dexRequestId, controller = new AbortController();
+    dexRequest = controller;
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    const isCurrent = () => requestId === dexRequestId && activeTool === 'pokedex';
+    dexGet('dex-error').hidden = true;
+    dexGet('dex-content').setAttribute('aria-busy', 'true');
+    if (!silent) {
+        dexGet('dex-content').innerHTML = '<div class="dex-empty" role="status">Loading collection&hellip;</div>';
+        for (const id of ['dex-active', 'dex-stats-bar', 'dex-toolbar', 'dex-share', 'dex-boss']) dexGet(id).hidden = true;
+        dexGet('dex-result-count').textContent = '';
+        dexGet('dex-trainer-name').textContent = '@' + username;
+        const nextUrl = dexTrainerUrl(username);
+        if (window.location.href !== nextUrl.href) window.history.pushState({}, '', nextUrl);
     }
-    
+    try {
+        const response = await fetch(getApiUrl('/api/pokedex/' + encodeURIComponent(username)), { signal: controller.signal, cache: 'no-store' });
+        if (response.status === 404) throw Error('No collection found for @' + username + '. Check the spelling, or catch your first Pokemon in chat.');
+        if (!response.ok) throw Error('The game is temporarily unavailable. Please try again shortly.');
+        const trainer = await response.json();
+        if (!isCurrent()) return;
+        let roster;
+        try { roster = typeof trainer.roster === 'string' ? JSON.parse(trainer.roster) : trainer.roster; } catch { roster = null; }
+        if (!Array.isArray(roster)) throw Error('This collection could not be loaded. Please try again.');
+        currentPokedexRoster = roster.filter(p => p && p.internalId != null).map(p => ({
+            ...p, level: Math.max(1, Math.min(100, Math.floor(dexNumber(p.level, 1)))), xp: Math.max(0, dexNumber(p.xp))
+        }));
+        if (!currentPokedexRoster.some(p => p.active) && currentPokedexRoster.length) {
+            const dates = currentPokedexRoster.map(p => Date.parse(p.caughtAt));
+            const first = dates.every(Number.isFinite) ? dates.indexOf(Math.min(...dates)) : 0;
+            currentPokedexRoster[first].active = true;
+        }
+        currentDexTrainer = { ...trainer, username: String(trainer.username || username) };
+        dexGet('dex-trainer-name').textContent = '@' + currentDexTrainer.username;
+        dexGet('stat-dex-balls').textContent = dexNumber(trainer.pokeballs).toLocaleString();
+        dexGet('stat-dex-caught').textContent = currentPokedexRoster.length.toLocaleString();
+        dexGet('stat-dex-unique').textContent = dexNumber(trainer.pokedexCount, new Set(currentPokedexRoster.map(p => p.internalId)).size).toLocaleString();
+        dexGet('stat-dex-shiny').textContent = currentPokedexRoster.filter(p => p.isShiny).length.toLocaleString();
+        for (const id of ['dex-stats-bar', 'dex-toolbar', 'dex-share']) dexGet(id).hidden = false;
+        const partner = currentPokedexRoster.find(p => p.active);
+        dexGet('dex-active').hidden = !partner;
+        if (partner) {
+            dexGet('dex-active').innerHTML = '<div><span class="dex-eyebrow">On-screen partner</span><h3>' + dexEscape(partner.name || 'Unknown') + ' <small>Lv' + partner.level + '</small></h3><p>Chat to bring this partner onto the overlay and earn XP. Each catch keeps its own progress when you swap.</p></div>' + dexXpMarkup(partner);
+        }
+        const progression = trainer.progression;
+        dexGet('dex-xp-help').textContent = progression
+            ? progression.xpPerMessage + ' XP per eligible chat message, with a ' + progression.xpCooldownSeconds + '-second cooldown. Evolution milestones: levels ' + progression.firstEvolutionLevel + ' / ' + progression.laterEvolutionLevel + '.'
+            : 'Chat to earn XP for your active partner. Each Pokemon keeps its own level, IVs, and XP.';
+        addToRecentViewed(currentDexTrainer.username);
+        renderPokedex();
+        dexGet('dex-updated').textContent = 'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' \u00b7 refreshes every 30 seconds';
+        // The trainer endpoint also works with older servers; boss status is an optional enhancement.
+        try {
+            const bossResponse = await fetch(getApiUrl('/api/pokemon/world'), { signal: controller.signal, cache: 'no-store' });
+            if (isCurrent()) {
+                if (bossResponse.ok) { const world = await bossResponse.json(); if (isCurrent()) renderDexBoss(world); }
+                else { dexBoss = null; dexGet('dex-boss').hidden = true; }
+            }
+        } catch { if (isCurrent()) { dexBoss = null; dexGet('dex-boss').hidden = true; } }
+    } catch (error) {
+        if (!isCurrent()) return;
+        dexGet('dex-error').textContent = controller.signal.aborted ? 'The game took too long to respond. Please try again.' : error.message || 'Could not connect to the game. Please try again.';
+        dexGet('dex-error').hidden = false;
+        if (silent) dexGet('dex-error').textContent += ' Showing the last loaded collection.';
+        else {
+            currentDexTrainer = null; currentPokedexRoster = [];
+            dexGet('dex-content').innerHTML = '';
+            dexGet('dex-updated').textContent = '';
+        }
+    } finally {
+        clearTimeout(timeout);
+        if (isCurrent()) { dexRequest = null; dexGet('dex-content').setAttribute('aria-busy', 'false'); }
+    }
+}
+function dexXpMarkup(pokemon) {
+    const required = pokemon.level >= 100 ? 0 : Math.max(1, dexNumber(pokemon.nextLevelXp, 50 + pokemon.level * 25));
+    const xp = Math.min(required, pokemon.xp), percentage = required ? Math.round(xp / required * 100) : 100;
+    return '<div class="dex-xp"><div class="dex-xp-label"><span>' + (required ? 'To level ' + (pokemon.level + 1) : 'Maximum level') + '</span><strong>' + (required ? xp + ' / ' + required + ' XP' : 'Lv100') + '</strong></div><div class="dex-xp-track" role="progressbar" aria-label="Level progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + percentage + '"><span style="width:' + percentage + '%"></span></div></div>';
+}
+function renderPokedex() {
+    const container = dexGet('dex-content');
+    if (!container) return;
+    const query = dexGet('dex-pokemon-search').value.trim().toLowerCase().replace(/^#/, '');
+    const filter = dexGet('dex-filter').value;
+    let roster = currentPokedexRoster.filter(p =>
+        (!query || String(p.name || '').toLowerCase().includes(query) || String(p.internalId).toLowerCase() === query) &&
+        (filter !== 'shiny' || p.isShiny) && (filter !== 'active' || p.active) && (filter !== 'team' || p.locked)
+    );
+    const sort = dexGet('dex-sort').value;
+    roster.sort((a, b) => {
+        if (sort === 'name') return String(a.name || '').localeCompare(String(b.name || ''));
+        if (sort === 'number') return String(a.internalId).localeCompare(String(b.internalId), undefined, { numeric: true });
+        if (sort === 'recent') return (Date.parse(b.caughtAt) || 0) - (Date.parse(a.caughtAt) || 0);
+        if (sort === 'level') return b.level - a.level;
+        return Number(Boolean(b.active)) - Number(Boolean(a.active)) || b.level - a.level;
+    });
+    dexGet('dex-result-count').textContent = 'Showing ' + roster.length + ' of ' + currentPokedexRoster.length + ' individual Pokemon';
+    if (!roster.length) {
+        container.innerHTML = '<div class="dex-empty"><h3>' + (currentPokedexRoster.length ? 'No matches yet' : 'Ready for your first catch?') + '</h3><p>' + (currentPokedexRoster.length ? 'Try another name or collection filter.' : 'Use !catch in stream chat when a wild Pokemon appears.') + '</p></div>';
+        return;
+    }
+    container.innerHTML = roster.map(p => {
+        const image = getApiUrl('/assets/sprites/' + (p.isShiny ? 'shiny' : 'normal') + '/' + encodeURIComponent(String(p.internalId)) + '.png');
+        const ivKeys = [['HP','hp'],['ATK','atk'],['DEF','def'],['SP. ATK','spAtk'],['SP. DEF','spDef'],['SPEED','speed']];
+        const iv = key => Math.max(0, Math.min(31, Math.floor(dexNumber(p.ivs?.[key]))));
+        const total = ivKeys.reduce((sum, [, key]) => sum + iv(key), 0);
+        const uniqueSpecies = currentPokedexRoster.filter(other => other.internalId === p.internalId).length === 1;
+        const selector = p.id || (uniqueSpecies ? p.internalId : '');
+        const command = selector ? '!pokemon ' + selector : '';
+        const evolution = p.evolution, choices = evolution?.choices || [];
+        const evolutionText = choices.length ? 'Evolves ' + (evolution.ready ? 'now' : 'at Lv' + evolution.level) + ': ' + choices.map(c => c.name).join(' / ') : '';
+        const evolutionButtons = p.active && evolution?.ready && choices.length > 1 ? choices.map(c => '<button type="button" class="dex-evolve" data-dex-copy="' + dexEscape('!evolve ' + c.internalId) + '">Copy evolve ' + dexEscape(c.name) + '</button>').join('') : '';
+        return '<article class="dex-card' + (p.active ? ' dex-card-active' : '') + (p.isShiny ? ' dex-card-shiny' : '') + '">' +
+            '<div class="dex-card-tags"><span>#' + dexEscape(p.internalId) + '</span><div>' + (p.active ? '<span class="dex-tag dex-tag-active">Active</span>' : '') + (p.isShiny ? '<span class="dex-tag dex-tag-shiny">Shiny</span>' : '') + (p.locked ? '<span class="dex-tag">Team</span>' : '') + '</div></div>' +
+            '<div class="dex-sprite"><img src="' + dexEscape(image) + '" alt="' + dexEscape(p.name || 'Pokemon') + '" loading="lazy" decoding="async"></div>' +
+            '<h3>' + dexEscape(p.name || 'Unknown') + '</h3><p class="dex-card-level">Level ' + p.level + '</p>' + dexXpMarkup(p) +
+            (evolutionText ? '<p class="dex-evolution">' + dexEscape(evolutionText) + '</p>' + evolutionButtons : '') +
+            '<details class="dex-ivs"><summary>Individual values <strong>' + total + ' / 186</strong></summary><div class="dex-iv-grid">' + ivKeys.map(([label,key]) => '<div><span>' + label + '</span><strong' + (iv(key) === 31 ? ' class="dex-perfect"' : '') + '>' + iv(key) + '/31</strong></div>').join('') + '</div></details>' +
+            '<button type="button" class="dex-select" ' + (p.active || !command ? 'disabled' : 'data-dex-copy="' + dexEscape(command) + '"') + '>' + (p.active ? 'Current partner' : command ? 'Copy selection command' : 'Chat, then refresh to select') + '</button>' +
+            (command ? '<details class="dex-command"><summary>View chat command</summary><code>' + dexEscape(command) + '</code></details>' : '') + '</article>';
+    }).join('');
+}
+function addToRecentViewed(username) {
+    recentViewedTrainers = [dexUsername(username), ...recentViewedTrainers.filter(u => u !== dexUsername(username))].slice(0, 8);
+    try { localStorage.setItem('bacon-pokedex-recent', JSON.stringify(recentViewedTrainers)); } catch {}
     renderRecentViewed();
 }
-
 function renderRecentViewed() {
-    const list = document.getElementById('dex-recent-list');
+    const list = dexGet('dex-recent-list');
     if (!list) return;
-
-    if (recentViewedTrainers.length === 0) {
-        list.innerHTML = '<div class="text-center text-zinc-500 text-xs italic py-4">No recent searches</div>';
-        return;
-    }
-
-    list.innerHTML = recentViewedTrainers.map(username => `
-        <button onclick="executeDexSearch('${username}')" class="w-full bg-black border border-zinc-800 hover:border-red-500/50 p-3 rounded-xl flex items-center gap-3 group transition-colors text-left outline-none cursor-pointer">
-            <div class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center shrink-0 border border-zinc-700 overflow-hidden relative">
-                <i class="fas fa-user text-zinc-600 absolute"></i>
-                <img src="https://decapi.me/twitch/avatar/${username}" class="absolute inset-0 w-full h-full object-cover z-10" onerror="this.style.display='none'">
-            </div>
-            <div class="flex-1 min-w-0">
-                <h4 class="text-zinc-300 font-bold text-sm truncate group-hover:text-red-400 transition-colors">${username}</h4>
-            </div>
-            <i class="fas fa-chevron-right text-zinc-700 group-hover:text-red-500 transition-colors text-xs"></i>
-        </button>
-    `).join('');
+    list.innerHTML = recentViewedTrainers.length
+        ? recentViewedTrainers.map(username => '<button type="button" data-dex-trainer="' + dexEscape(username) + '">@' + dexEscape(username) + '<span aria-hidden="true">&rarr;</span></button>').join('')
+        : '<p>Your recent trainer searches appear here.</p>';
 }
+function renderDexBoss(world) {
+    dexBoss = world.boss;
+    const banner = dexGet('dex-boss');
+    if (!world.gameActive || !dexBoss) { banner.hidden = true; return; }
+    const participant = (dexBoss.participants || []).find(p => dexUsername(p.username) === dexUsername(currentDexTrainer?.username));
+    const joined = Boolean(participant);
+    const phase = dexBoss.phase, bossName = dexBoss.pokemon?.nameEn || 'Boss';
+    let hint = '', command = '';
+    if (phase === 'lobby') { hint = joined ? 'This trainer joined with their selected partner.' : 'Choose your partner, then join in stream chat.'; command = joined ? '' : '!joinboss'; }
+    else if (phase === 'catching') { hint = joined ? 'Victory! Battle participants can make one catch attempt.' : 'Defeated! Only trainers who joined this battle can try to catch it.'; if (participant?.attempted || participant?.caught) hint = participant.caught ? 'This trainer caught the boss!' : 'This trainer has used their one catch attempt.';
+        command = joined && !participant.attempted && !participant.caught ? '!bosscatch' : ''; }
+    else { hint = 'The battle runs automatically. ' + (joined ? 'This trainer is in the fight.' : 'Join the next lobby to take part.'); }
+    banner.innerHTML = '<div><span class="dex-eyebrow">Boss ' + dexEscape(phase) + ' <span id="dex-boss-clock"></span></span><h3>' + dexEscape(bossName) + ' <small>Lv' + dexNumber(dexBoss.level, 1) + '</small></h3><p>' + dexEscape(hint) + '</p></div>' + (command ? '<button type="button" data-dex-copy="' + command + '">' + (command === '!joinboss' ? 'Copy join command' : 'Copy catch command') + '</button>' : '');
+    banner.hidden = false; updateDexBossClock();
+}
+function updateDexBossClock() {
+    const clock = dexGet('dex-boss-clock');
+    if (!clock || !dexBoss?.endsAt) return;
+    const seconds = Math.max(0, Math.ceil((dexBoss.endsAt - Date.now()) / 1000));
+    const button = dexGet('dex-boss').querySelector('button');
+    if (button) button.disabled = seconds <= 0;
+    clock.textContent = '\u00b7 ' + Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0') + ' left';
+}
+window.executeDexSearch = executeDexSearch;
 
 // ==========================================
 // REAL DATA: CUSTOM BALLS

@@ -21,8 +21,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
-    <link rel="stylesheet" href="./style.css">
-    <script src="./app.js"></script>
+    <link rel="stylesheet" href="./style.css?v=pokedex-2">
+    <script src="./app.js?v=pokedex-2"></script>
     
     <style>
         /* Specific page overrides to match your old layout */
@@ -478,17 +478,52 @@
                 </div>
 
                 <div id="pokedex-container" class="hidden w-full p-4 md:p-8 pb-8">
-                    <div class="max-w-6xl mx-auto">
-                        <div class="mb-8 border-b border-zinc-800 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
-                            <div>
-                                <h2 class="text-4xl font-black text-white tracking-tight">Tinko <span class="text-red-500">Pokedex</span></h2>
-                                <p class="text-zinc-400 mt-2 text-lg">Discovered avatars and dropped entities.</p>
-                            </div>
-                            <button onclick="fetchPokedex()" class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white px-4 py-2 rounded-xl transition-colors shadow-sm"><i class="fas fa-sync-alt"></i></button>
+                    <div class="dex-shell">
+                        <header class="dex-header">
+                            <div><span class="dex-eyebrow">Pokemon Meadow / Trainer collections</span><h2>Your <span>Pok&eacute;dex</span></h2><p>Every catch. Every level. Your next partner.</p></div>
+                            <button type="button" id="dex-refresh" class="dex-secondary" aria-label="Refresh trainer collection"><i class="fas fa-sync-alt" aria-hidden="true"></i> Refresh</button>
+                        </header>
+                        <form id="dex-search-form" class="dex-search">
+                            <div><label for="dex-search-input">Trainer username</label><input id="dex-search-input" name="trainer" type="search" placeholder="Your Twitch, Kick, or YouTube username" maxlength="80" autocomplete="off" autocapitalize="none" spellcheck="false" required></div>
+                            <button type="submit" class="dex-primary">Find trainer <span aria-hidden="true">&rarr;</span></button>
+                        </form>
+                        <div class="dex-layout">
+                            <section class="dex-collection" aria-label="Trainer collection">
+                                <div class="dex-trainer-heading"><h3 id="dex-trainer-name">Your collection starts here</h3><button type="button" id="dex-share" class="dex-secondary" hidden>Copy trainer link</button></div>
+                                <div id="dex-error" class="dex-error" role="alert" hidden></div>
+                                <div id="dex-stats-bar" class="dex-stats" hidden>
+                                    <div><span>Pok&eacute;balls</span><strong id="stat-dex-balls">0</strong></div>
+                                    <div><span>Individuals caught</span><strong id="stat-dex-caught">0</strong></div>
+                                    <div><span>Species discovered</span><strong id="stat-dex-unique">0</strong></div>
+                                    <div><span>Shiny partners</span><strong id="stat-dex-shiny">0</strong></div>
+                                </div>
+                                <section id="dex-active" class="dex-active" aria-label="Current partner" hidden></section>
+                                <section id="dex-boss" class="dex-boss" aria-label="Current boss battle" hidden></section>
+                                <div id="dex-toolbar" class="dex-toolbar" hidden>
+                                    <div><label for="dex-pokemon-search">Find a Pok&eacute;mon</label><input id="dex-pokemon-search" type="search" placeholder="Name or #Dex number"></div>
+                                    <div><label for="dex-filter">Show</label><select id="dex-filter"><option value="all">All catches</option><option value="active">Active partner</option><option value="shiny">Shinies</option><option value="team">Team showcase</option></select></div>
+                                    <div><label for="dex-sort">Sort by</label><select id="dex-sort"><option value="active">Active first</option><option value="level">Highest level</option><option value="recent">Newest catch</option><option value="number">Dex number</option><option value="name">Name</option></select></div>
+                                </div>
+                                <p id="dex-result-count" class="dex-result-count" aria-live="polite"></p>
+                                <div id="dex-content" class="dex-grid" aria-busy="false"></div>
+                                <p id="dex-updated" class="dex-updated"></p>
+                            </section>
+                            <aside class="dex-sidebar">
+                                <section class="dex-guide">
+                                    <span class="dex-eyebrow">Make it your partner</span><h3>Pick. Paste. Play.</h3>
+                                    <ol><li>Find a Pok&eacute;mon in your collection.</li><li>Copy its selection command.</li><li>Paste it into the stream chat from your account.</li></ol>
+                                    <p>Your partner swaps on screen when you chat. Viewing someone else's collection doesn't give access to their Pok&eacute;mon.</p>
+                                    <p id="dex-xp-help">Chat to earn XP for your active partner. Each Pok&eacute;mon keeps its own level, IVs, and XP.</p>
+                                </section>
+                                <section class="dex-quick">
+                                    <h3>Ready for the meadow?</h3><p>Copy a command, then send it in stream chat.</p>
+                                    <div><button type="button" data-dex-copy="!jump">Jump</button><button type="button" data-dex-copy="!dance">Dance</button><button type="button" data-dex-copy="!actions">All actions</button><button type="button" data-dex-copy="!joinboss">Join boss</button></div>
+                                    <p>Boss battles use your current partner. Leave the lobby with <code>!leaveboss</code> before swapping.</p>
+                                </section>
+                                <section class="dex-recent"><h3>Recently viewed</h3><div id="dex-recent-list"></div></section>
+                            </aside>
                         </div>
-                        
-                        <div id="dex-notice"></div>
-                        <div id="dex-content" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
+                        <div class="dex-copy-feedback"><p id="dex-copy-status" role="status" aria-live="polite"></p><input id="dex-copy-value" type="text" readonly aria-label="Text to copy" hidden></div>
                     </div>
                 </div>
 
